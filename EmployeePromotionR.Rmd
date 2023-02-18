@@ -1,0 +1,47 @@
+---
+title: "EmployeePromotion"
+output: html_document
+date: "2023-02-18"
+---
+
+```
+
+```
+
+
+Información general del Dataset
+
+```{r}
+data_train<- read.csv("train.csv")
+head(data_train)
+colnames(data_train)
+data_test<- read.csv("test.csv")
+head(data_test)
+colnames(data_test)
+
+```
+
+```{r}
+str(data_train)
+summary(data_train)
+dim(data_train)
+object.size(data_train)/1024
+```
+```{r}
+str(data_test)
+summary(data_test)
+dim(data_test)
+object.size(data_test)/1024
+
+```
+```{r}
+print(paste("Número de valores faltantes totales:", sum(is.na(data_train))))
+data_train <- na.omit(data_train)
+data_train <- unique(data_train)
+```
+```{r}
+print(paste("Número de valores faltantes totales:", sum(is.na(data_test))))
+data_test <- na.omit(data_test)
+data_test <- unique(data_test)
+```
+
