@@ -1,47 +1,204 @@
 ---
 title: "EmployeePromotion"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 date: "2023-02-18"
 ---
 
-```
+Poner aquí documentación
 
+Este proyecto está realizado por el grupo 3 formado por José Arturo Espaillat, Johnsiel Castaños, José Delgado, Salama Mohamed-fadel Sidna. El dataset elegido es llamado HR Analytics: Employer Promotion Data (https://www.kaggle.com/datasets/arashnic/hr-ana?select=test.csv) sacado de Kaggle, el cual cuenta con X columnas y X filas para analizar si un empleado será o no promocionado. Hablar más de esto, mirar Rúbica
+
+Para organizarnos, hemos decidido crear un repositorio en GitHub (https://github.com/Josdelser/DataScienceEmployeePromotion/tree/develop) para trabajar simultáneamente. También hemos creado una bolsa de preguntas y las hemos asignado según las capacidades y aspiraciones de cada persona. En el caso de que algún miembro quiera obtener una calificación más alta, deberá realizar un mayor número de preguntas individuales. Todos los miembros realizarán una pregunta para la parte grupal y se ha intentado que estas preguntas estén relacionadas con las preguntas individuales, para poder afrontar mejor el reto. A continuación, se detalla la bolsa de preguntas y la asignación de cada miembro.
+
+
+Jose Delgado:
+
+  -Grupal
+  
+    ¿Como predecir si será promovido un empleado?
+    
+    
+  -Individual:
+    
+    ¿Nos puede ayudar la visualización a sacar conclusiones temprana?
+    
+    ¿Habrá diferencias respecto a predecir con regresion logistica?
+    
+    ¿correlacion tetraconica para ver correlacion entre variables booleanas
+correlacion cramer o maxwell
+one-hot encoding para correlacion booleana?
+
+    
+    ¿Quitando variables mejorará el arbol?
+    
+Salama:
+Johnsiel:
+Jose Espaillat:
+    
+    
+Cada miembro realizará la documentación de ambas partes asignadas. Además en el documento se indicará donde empieza y acaba la parte de cada miembro para que así sea mas sencilla su evaluación. 
+
+```{r}
+library(dplyr)
+library(rpart)
+library(rpart.plot)
+library(caret)
+library(rpart)
+library(rpart.plot)
+library(rattle)
+library(dplyr)
+library(ggplot2)
+library(RColorBrewer)
+library(caret)
+library(ggfortify)
+library(readr)
+library(factoextra)
+
+
+require(corrplot)
+
+
+set.seed(28)
 ```
 
 
 Información general del Dataset
 
 ```{r}
-data_train<- read.csv("train.csv")
-head(data_train)
-colnames(data_train)
-data_test<- read.csv("test.csv")
-head(data_test)
-colnames(data_test)
-
+data<- read.csv("train.csv")
+data <- rename(data, awards_won = awards_won.)
+head(data)
+colnames(data)
+attach(data)
 ```
 
 ```{r}
-str(data_train)
-summary(data_train)
-dim(data_train)
-object.size(data_train)/1024
+str(data)
+dim(data)
+object.size(data)/1024
 ```
+
 ```{r}
-str(data_test)
-summary(data_test)
-dim(data_test)
-object.size(data_test)/1024
+print(paste("Número de valores faltantes totales:", sum(is.na(data))))
+data <- na.omit(data)
+data <- unique(data)
 
 ```
+*Aquí empieza la parte de Jose Delgado
+
+Una vez cargado el dataset y tratado minimamente vamos a pasar a hacer responder a las preguntas, primero la pregunta grupal:
+
+¿Como predecir si será promovido un empleado?
+
+La cual se plantea responder mediante una predicción utilizando validacion cruzada (cross_validation), para ello podemos tirar de regresión lógistica o un árbol de decisión. En este caso usaré arboles de decisión para así también ver que variables inlfuyen y poder comparar este resultado con las preguntas individuales 
+
+
+Primero le hacemos preprocesamiento de manera preparatoria a la prediccion, luego dividimos el dataset en conjunto de prueba(test) y entrenamiento(train) para obtener resultado
 ```{r}
-print(paste("Número de valores faltantes totales:", sum(is.na(data_train))))
-data_train <- na.omit(data_train)
-data_train <- unique(data_train)
+dep_levels <- unique(data$department)
+gen_levels <- unique(data$gender)
+recru_levels <- unique(data$recruitment_channel)
+promo_levels <- unique(data$is_promoted )
+
+
+data$department <- factor(data$department, levels = dep_levels)
+data$gender  <- factor(data$gender , levels = gen_levels)
+data$recruitment_channel <- factor(data$recruitment_channel, levels = recru_levels)
+data$is_promoted <- factor(data$is_promoted, levels = promo_levels)
+
+```
+
+
+
+
+```{r}
+division <- createDataPartition(data$is_promoted, p = .7, list = FALSE, times = 1)
+train <- data[division, ]
+test  <- data[-division, ]
+```
+
+Entrenamos el modelo y visualizamos para tener una primera imagen de las variables decisivas 
+
+```{r}
+arbol <- rpart(formula =  is_promoted  ~ ., data = train, method = 'class')
+
+fancyRpartPlot(arbol)
+```
+
+
+
+Podemos observar que la variable que mas afecta es la puntuación en el rango superior a 91, donde con un 99% de posibilidades seras promocionado. AL tener una variable con tanta importancia se nos viene a la cabeza otra pregunta: Quitando esta variable, ¿Como sería el arbol final?. Se plantea segunda pregunta
+
+Pasamos a predecir según clasifacación 
+
+```{r}
+prediccion <-predict(arbol, test, type = "class")
+```
+ 
+Ahora toca evaluar el rendimiento según validación cruzada. 
+
+```{r}
+valcruz <- trainControl(method = "cv", number = 10)
+
+arbolfit <- train(is_promoted ~ ., data = train, method = "rpart",
+                 trControl = valcruz, tuneLength = 10)
+```
+
+Graficamos
+
+```{r}
+rpart.plot(arbolfit$finalModel, type = 2, extra = 1)
+
+```
+
+Mejoras visualizacion
+```{r}
+prp(arbolfit$finalModel, type = 2, nn = TRUE, 
+    fallen.leaves = FALSE,
+    varlen = 0,  shadow.col = "gray")
 ```
 ```{r}
-print(paste("Número de valores faltantes totales:", sum(is.na(data_test))))
-data_test <- na.omit(data_test)
-data_test <- unique(data_test)
+prediccionTest <- predict(arbolfit, newdata = test)
+confusionMatrix(prediccionTest, test$is_promoted)
 ```
+
+
+Jose preguntas individuales
+
+
+
+un analisis exploratorio para ver por donde van los tiros antes de hacer la prediccion y así ver variables que puedan afectar directamente.
+
+Primero vamos a ver las proporciones de las variables. En la caso de las numericas vamos a sacar informacion estadistica como la mediana, max, min... En el caso de las categoricas veremos el numeros de observaciones según las categorias de la variable
+
+```{r}
+summary(data)
+```
+
+```{r}
+table(data$department)
+table(data$region)
+table(data$education)
+table(data$gender)
+table(data$recruitment_channel)
+table(data$awards_won)
+
+```
+Aqui poner conclusiones según esto
+```{r}
+# Calcular la correlación
+correlation_matrix <- cor(data[,c("no_of_trainings", "age", "previous_year_rating", "length_of_service", "awards_won?", "avg_training_score", "is_promoted")])
+
+# Visualizar la matriz de correlación
+library(corrplot)
+corrplot(correlation_matrix, method="color", type="upper", order="hclust")
+```
+
+
+
+* Aquí empieza la parte de Salama
+* Aquí empieza la parte de Johnsiel
+* Aquí empieza la parte de Jose Espaillat
 
