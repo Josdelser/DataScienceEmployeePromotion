@@ -17,21 +17,21 @@ Jose Delgado:
 
   -Grupal
   
-    ¿Como predecir si será promovido un empleado?
+    ¿Podemos sacar conclusiones tempranas de que variables afectan prediciendo si será promovido un empleado?
+    
+    ¿Quitando variables mejorará el arbol?
     
     
   -Individual:
     
     ¿Nos puede ayudar la visualización a sacar conclusiones temprana?
     
-    ¿Habrá diferencias respecto a predecir con regresion logistica?
-    
-    ¿correlacion tetraconica para ver correlacion entre variables booleanas
-correlacion cramer o maxwell
-one-hot encoding para correlacion booleana?
+    Uso de la correlacion cramer para responder a ¿Existe una correlación significativa entre la variable categórica "education" y la variable objetivo "is_promoted"?
+ 
 
     
-    ¿Quitando variables mejorará el arbol?
+
+    
     
 Salama:
 Johnsiel:
@@ -44,17 +44,12 @@ Cada miembro realizará la documentación de ambas partes asignadas. Además en 
 library(dplyr)
 library(rpart)
 library(rpart.plot)
-library(caret)
-library(rpart)
-library(rpart.plot)
 library(rattle)
 library(dplyr)
 library(ggplot2)
 library(RColorBrewer)
-library(caret)
 library(ggfortify)
-library(readr)
-library(factoextra)
+library(vcd)
 
 
 require(corrplot)
@@ -97,26 +92,35 @@ La cual se plantea responder mediante una predicción utilizando validacion cruz
 
 Primero le hacemos preprocesamiento de manera preparatoria a la prediccion, luego dividimos el dataset en conjunto de prueba(test) y entrenamiento(train) para obtener resultado
 ```{r}
-dep_levels <- unique(data$department)
-gen_levels <- unique(data$gender)
-recru_levels <- unique(data$recruitment_channel)
-promo_levels <- unique(data$is_promoted )
+datajose <- data
+```
+
+```{r}
+dep_levels <- unique(datajose$department)
+gen_levels <- unique(datajose$gender)
+recru_levels <- unique(datajose$recruitment_channel)
+promo_levels <- unique(datajose$is_promoted )
+award_levels <- unique(datajose$awards_won)
 
 
-data$department <- factor(data$department, levels = dep_levels)
-data$gender  <- factor(data$gender , levels = gen_levels)
-data$recruitment_channel <- factor(data$recruitment_channel, levels = recru_levels)
-data$is_promoted <- factor(data$is_promoted, levels = promo_levels)
+datajose$department <- factor(datajose$department, levels = dep_levels)
+datajose$gender  <- factor(datajose$gender , levels = gen_levels)
+datajose$recruitment_channel <- factor(datajose$recruitment_channel, levels = recru_levels)
+datajose$is_promoted <- factor(datajose$is_promoted, levels = promo_levels)
+datajose$awards_won <- factor(datajose$awards_won, levels = award_levels)
 
+```
+
+```{r}
+datajosepred <-datajose
 ```
 
 
 
-
 ```{r}
-division <- createDataPartition(data$is_promoted, p = .7, list = FALSE, times = 1)
-train <- data[division, ]
-test  <- data[-division, ]
+division <- createDataPartition(datajosepred$is_promoted, p = .7, list = FALSE, times = 1)
+train <- datajosepred[division, ]
+test  <- datajosepred[-division, ]
 ```
 
 Entrenamos el modelo y visualizamos para tener una primera imagen de las variables decisivas 
@@ -163,38 +167,197 @@ prp(arbolfit$finalModel, type = 2, nn = TRUE,
 prediccionTest <- predict(arbolfit, newdata = test)
 confusionMatrix(prediccionTest, test$is_promoted)
 ```
+Con estos datos ya podemos sacar conclusiones sobre el modelo:
+  
+  - Hay 13,861 verdaderos negativos y 254 verdaderos positivos
+  
+  - Hay 1,044 falsos negativos y 45 falsos positivos
+
+Ya con estos valores vemos que el modelo esta bien ajustado. Con estos datos obtenemos una precisión del 92,8% y una tasa de error del 7,16%. También observamos que tenemos mayor capacidad para acerta, es decir predecir cuando se va a promover que cuando no se va a promover.
+
+Ademas observando el arbolfit vemos que ya aparecen mas variables que son relevantes como award_won y previus_year_rating. Añadir que vemos una fuerte tendencia en el departamento de analiticas, donde superando los 82 puntos serás promocionado con alta seguridad. 
+
+Segunda pregunta
+
+    ¿Quitando variables mejorará el arbol?
 
 
-Jose preguntas individuales
 
-
-
-un analisis exploratorio para ver por donde van los tiros antes de hacer la prediccion y así ver variables que puedan afectar directamente.
-
-Primero vamos a ver las proporciones de las variables. En la caso de las numericas vamos a sacar informacion estadistica como la mediana, max, min... En el caso de las categoricas veremos el numeros de observaciones según las categorias de la variable
+Hemos visto que avg_training_score tiene mucho peso, por lo que me surgió la pregunta de que si eliminando esta variable que otras variables afectan, ademas de ver si mejoramos el modelo.
 
 ```{r}
-summary(data)
+datajosearbol2 <-datajose
 ```
 
 ```{r}
-table(data$department)
-table(data$region)
-table(data$education)
-table(data$gender)
-table(data$recruitment_channel)
-table(data$awards_won)
+arbol2 <- rpart(is_promoted ~ . - avg_training_score, data = datajosearbol2, method = "class")
+fancyRpartPlot(arbol2)
 
 ```
-Aqui poner conclusiones según esto
+Directamente vemos que nos da resultados parecidos al arbol entrenado, volviendo a afirmar que el modelo está bien ajustado. Con esta conclusion nos ahorramos de volver a predecir ya que intuimos que en el mejor de los casos va a igualar a los resultados anteriores. Gracias a un analisis previo nos hemos ahorrado esta parte. 
+
+
+Jose preguntas individuales:
+
+
+Una vez hecha la predicion, me pregunté si hay alguna gráfica que me hubiese podido ayudar a sacar una conclusion temprana de las variables que mas afectan. Para ello voy a realizar graficas tanto para variables numericas como categoricas.
+
+Pondré el caso de que no hemos predecido todavia y no se que variables afectan, de esta manera simularé un problema real ya que tenderé a ir a por las variables que creo que pueden afectar más
+
 ```{r}
-# Calcular la correlación
-correlation_matrix <- cor(data[,c("no_of_trainings", "age", "previous_year_rating", "length_of_service", "awards_won?", "avg_training_score", "is_promoted")])
-
-# Visualizar la matriz de correlación
-library(corrplot)
-corrplot(correlation_matrix, method="color", type="upper", order="hclust")
+datajosegraficas <- datajose
 ```
+
+Primero vamos a ver las variables categoricas. Empezamos por ver si los estudios influye, vamos a graficar la distribuccion de empleados promoviodos segun sus estudios 
+
+```{r}
+ggplot(data = datajosegraficas, aes(x = education, fill = is_promoted)) +
+  geom_bar(position = "dodge") +
+  labs(title = "Promocionado según estudios", 
+       x = "Nivel de estudios", 
+       y = "Total",
+       fill = "Promovido") +
+  theme_bw()
+
+```
+Observamos que la mayoría tienen como minimo el bachillerato y luego el Master. Podemos pensar que es una variable que afecta debido a las diferencias entre promovido o no pero no es decisiva o tiene una importancia mayor.
+
+Repetimos pero con los premios ganados
+¡
+```{r}
+ggplot(data = datajosegraficas, aes(x = awards_won, fill = is_promoted)) +
+  geom_bar(position = "stack") +
+  labs(title = "Promovido por premios ganados", 
+       x = "Premio", 
+       y = "Total",
+       fill = "Promovido") +
+  theme_bw()
+
+```
+Se observa que en los que están promovimos tiene mayor relevancia tener un premio, ya que el numero de promovidos con premios es notablemente mayor aunque a simple vista no se observe.
+
+```{r}
+ggplot(data = datajosegraficas, aes(x = department, fill = is_promoted)) +
+  geom_bar(position = "stack") +
+  labs(title = "Promocionado según departamento", 
+       x = "Departamento", 
+       y = "Total",
+       fill = "Promovido") +
+  theme_bw()
+
+```
+Con este grafico de barras apiladas vemos que esta variable no afecta fuertemente a la promocion ya que cada departamente tiene resultados iguales si no contamos en proporcion porque al no saber a que se dedica la empresa no podemos justificar el numero de empleados por cada departamento.
+
+
+Por último vamos a ver si el genero afecta
+```{r}
+ggplot(data = datajosegraficas, aes(x = gender, fill = is_promoted)) +
+  geom_bar(position = "stack") +
+  labs(title = "Promovido por géneros", 
+       x = "Géneros", 
+       y = "Total",
+       fill = "Promovido") +
+  theme_bw()
+
+```
+Aqui vemos que en proporcion que no afecta el género, ya que a simple vista los porcentajes de promocio segun el sexo parecen cercanoss.
+
+
+
+Ahora pasamos a las variables numericas.
+
+Empezamos con la edad representada en un grafico de densidad para ver donde se concentran la mayoria de promocionados por si vemos que la edad pueda afectar ya que tambien está relacionada con el tiempo que lleves en la empresa
+
+```{r}
+ggplot(data = datajosegraficas, aes(x = age, fill = is_promoted)) +
+  geom_density(alpha = 0.5) +
+  labs(title = "Promovido según edad", 
+       x = "Edad", 
+       y = "Densidad",
+       fill = "Promovido") +
+  theme_bw()
+
+```
+
+El rango es bastante amplio por lo que no vemos que al edad concreta pueda afectar, pero si puede afectar dependiendo de los años que lleve en la empresa, es decir, una person con 40 años tiene mas probabildiad de llevar mas tiempo en la empresa que una persona de 20. Por eso vamos a graficar ahora si el tiempo en la empresa afecta
+
+```{r}
+ggplot(data = datajosegraficas, aes(x = is_promoted, fill = factor(previous_year_rating))) +
+  geom_bar(position = "stack") +
+  labs(x = "Promovido", y = "Número de empleados") +
+  ggtitle("Gráfico de barras apiladas para la variable 'previous_year_rating'") 
+ 
+
+```
+Ahora si encontamos dos grupos que afectan a la promocion, los que llevan 5 años y 3.
+
+
+
+Por último vamos a probar con la variable avg_training_score para ver si esta nos afecta.Para ello vamos con un gráfico de cajas y bigotes
+
+```{r}
+ggplot(data = datajosegraficas, aes(x = is_promoted, y = avg_training_score)) +
+  geom_boxplot() +
+  labs(x = "Promovido", y = "Puntuación de entrenamiento promedio") +
+  ggtitle("Gráfico de cajas y bigotes para la variable 'avg_training_score'")
+
+```
+
+
+Observamos que la variable av_training_score es bastante importante ya que por encima de cierto rango se concentra todos los que han sido promovidos.
+
+
+La conclusion final que sacamos de estos gráficas está bastantante relacionada con la de la prediccion. Vemos que ciertas variables tienden a afectar de manera directa a la promocion y tanto en graficas como en prediccion concuerdan unas con otras.
+
+
+Segunda pregunta individual
+
+
+    Uso de la correlacion cramer para responder a ¿Existe una correlación significativa entre las variables categórica del dataset y la variable objetivo "is_promoted"?
+    
+La relación de cramer es un coeficiente que nos indica el grado de relación entre dos variables categoricas, de esta manera si probamos todas la variables categorias frente a is_promoted podremos analizar cuales son las que mayor relación tienen. Obviaremos las variables como region, genero y recuitment_channel ya que previamente hemos visto que no tienen una relacion importante. Se realizará con departamentos, estudios, genero y premios ganados
+
+
+Para ello primero tenemos que crear tablas de contigencias con las variables
+
+```{r}
+tabladepa <- table(datajose$department, datajose$is_promoted)
+tablagen <- table(datajose$gender, datajose$is_promoted)
+tablaedu <- table(datajose$education, datajose$is_promoted)
+tablawards <- table(datajose$awards_won, datajose$is_promoted)
+```
+
+
+```{r}
+cramerdepa<-assocstats(tabladepa)
+cramergen<-assocstats(tablagen)
+crameredu<-assocstats(tablaedu)
+cramerawards<-assocstats(tablawards)
+```
+
+```{r}
+cramerdepa$cramer
+cramergen$cramer
+crameredu$cramer
+cramerawards$cramer
+```
+Esto resultados son la V de cramer que nos da la relacion. Observamos, como tambien hemos demostrado arriba con las graficas, que tener un premio ganado tiena cierta importancia y sobre todo respecto al departamento  y educacion. Volver a corroborar que el genero no influyen en nada a la hora de ser promovido  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
