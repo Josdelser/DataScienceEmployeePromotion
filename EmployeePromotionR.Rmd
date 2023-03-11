@@ -347,38 +347,24 @@ Esto resultados son la V de cramer que nos da la relacion. Observamos, como tamb
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 * Aquí empieza la parte de Salama
 
 
 
 
-<strong>Lectura del dataset employee_promotion.csv</strong>
+<strong>Lectura del dataset train.csv</strong>
 ```{r,eval=TRUE,echo=TRUE}
-employee_promotion <- read.csv ("employee_promotion.csv")
-head(employee_promotion,5)
+data_Salama <- read.csv ("train.csv")
+head(data_Salama,5)
 ```
 
-<strong>Descripcion de dataset employee_promotion</strong>
+<strong>Descripcion de dataset data_Salama</strong>
 
 ```{r,eval=TRUE,echo=TRUE}
-str(employee_promotion)
+str(data_Salama)
 
-n_col <- ncol(employee_promotion)
-n_row <- nrow(employee_promotion)
+n_col <- ncol(data_Salama)
+n_row <- nrow(data_Salama)
 
 cat("Nombre de variables : ", n_col, ", y el nombre de instancias: ", n_row) 
 ```
@@ -387,11 +373,11 @@ cat("Nombre de variables : ", n_col, ", y el nombre de instancias: ", n_row)
 <strong>Variables con valores NA</strong>
 ```{r,eval=TRUE,echo=TRUE}
 cat("Los variables que contienen valore NA son: \n")
-colnames(employee_promotion)[colSums(is.na(employee_promotion)) > 0]
+colnames(data_Salama)[colSums(is.na(data_Salama)) > 0]
 
 
 cat("\n\n Nombre de NA en cada columna:  \n")
-colSums(is.na(employee_promotion))
+colSums(is.na(data_Salama))
 ```
 
 
@@ -403,9 +389,9 @@ colSums(is.na(employee_promotion))
 
 <strong>la edad a la que el empleado entró en la compañia</strong>
 ```{r,eval=TRUE,echo=TRUE}
-employee_promotion <- employee_promotion %>%
-mutate(employee_promotion, employee_start_age = as.numeric(employee_promotion$age - employee_promotion$length_of_service))
-head(employee_promotion,5)
+data_Salama <- data_Salama %>%
+mutate(data_Salama, employee_start_age = as.numeric(data_Salama$age - data_Salama$length_of_service))
+head(data_Salama,5)
 ```
 
 
@@ -413,16 +399,16 @@ head(employee_promotion,5)
 <strong>Recodificación de la variable "AGE" en cuatro grupos</strong>
 ```{r,eval=TRUE,echo=TRUE}
 
-min_age = min(employee_promotion$age)
-max_age = max(employee_promotion$age)
+min_age = min(data_Salama$age)
+max_age = max(data_Salama$age)
 lg_age = as.numeric(as.integer( (  max_age - min_age)/4) )
 
-employee_promotion <- employee_promotion %>%
-mutate(employee_promotion, age_group = ifelse(employee_promotion$age >= min_age & employee_promotion$age < (min_age + lg_age), "twenties",
- ifelse(employee_promotion$age >= (min_age + lg_age) & employee_promotion$age < (min_age + (2 * lg_age)), "thirties", 
-  ifelse(employee_promotion$age >= (min_age + (2 * lg_age)) & employee_promotion$age < (min_age + (3 * lg_age)), "forties",
-    ifelse(employee_promotion$age >= (min_age + (3 * lg_age)) & employee_promotion$age <= (min_age + (4 * lg_age)), "fifties", "Unclassified")))))
-head(employee_promotion,5)
+data_Salama <- data_Salama %>%
+mutate(data_Salama, age_group = ifelse(data_Salama$age >= min_age & data_Salama$age < (min_age + lg_age), "twenties",
+ ifelse(data_Salama$age >= (min_age + lg_age) & data_Salama$age < (min_age + (2 * lg_age)), "thirties", 
+  ifelse(data_Salama$age >= (min_age + (2 * lg_age)) & data_Salama$age < (min_age + (3 * lg_age)), "forties",
+    ifelse(data_Salama$age >= (min_age + (3 * lg_age)) & data_Salama$age <= (min_age + (4 * lg_age)), "fifties", "Unclassified")))))
+head(data_Salama,5)
 
 ```
 
@@ -431,7 +417,7 @@ head(employee_promotion,5)
 
 ```{r,eval=TRUE,echo=TRUE}
 library(plyr)
-n_g_e <- ddply(employee_promotion, .(age_group), nrow)
+n_g_e <- ddply(data_Salama, .(age_group), nrow)
 n_g_e
 
 ```
@@ -441,11 +427,11 @@ n_g_e
 
 ```{r,eval=TRUE,echo=TRUE}
 
-employee_promotion <- employee_promotion[order(-employee_promotion$avg_training_score),]
-max_value = employee_promotion$avg_training_score[1]
+data_Salama <- data_Salama[order(-data_Salama$avg_training_score),]
+max_value = data_Salama$avg_training_score[1]
 
 # Calcular los cuartiles de la dataset
-max_rows = as.numeric(as.integer(nrow(employee_promotion)))
+max_rows = as.numeric(as.integer(nrow(data_Salama)))
 Q2_r= as.numeric( ( max_rows + 1) / 2 )
 Q1_r = as.numeric( (as.integer(Q2_r) + 1) / 2 )
 Q3_r = as.numeric(  ( as.integer(max_rows) + (as.integer(Q2_r) + 1) )/ 2 )
@@ -458,17 +444,17 @@ Q3_i = as.integer(Q3_r)
 
 
 # Extraer los valores de puntaje de estas lineas
-Q1_v = employee_promotion$avg_training_score[Q1_i]
-Q2_v = employee_promotion$avg_training_score[Q2_i]
-Q3_v = employee_promotion$avg_training_score[Q3_i]
+Q1_v = data_Salama$avg_training_score[Q1_i]
+Q2_v = data_Salama$avg_training_score[Q2_i]
+Q3_v = data_Salama$avg_training_score[Q3_i]
 
-employee_promotion <- employee_promotion %>%
-mutate(employee_promotion, training_score_group = ifelse( is.na(employee_promotion$avg_training_score), "Abs",
- ifelse(employee_promotion$avg_training_score <= Q3_v, "D", 
-  ifelse(employee_promotion$avg_training_score <= Q2_v, "C",
-    ifelse(employee_promotion$avg_training_score <= Q1_v , "B", 
-      ifelse(employee_promotion$avg_training_score <= max_value, "A", "Puntaje no clasificado"))))))
-head(employee_promotion,5)
+data_Salama <- data_Salama %>%
+mutate(data_Salama, training_score_group = ifelse( is.na(data_Salama$avg_training_score), "Abs",
+ ifelse(data_Salama$avg_training_score <= Q3_v, "D", 
+  ifelse(data_Salama$avg_training_score <= Q2_v, "C",
+    ifelse(data_Salama$avg_training_score <= Q1_v , "B", 
+      ifelse(data_Salama$avg_training_score <= max_value, "A", "Puntaje no clasificado"))))))
+head(data_Salama,5)
 
 ```
 
@@ -477,7 +463,7 @@ head(employee_promotion,5)
 
 ```{r,eval=TRUE,echo=TRUE}
 library(plyr)
-n_g_p <- ddply(employee_promotion, .(training_score_group), nrow)
+n_g_p <- ddply(data_Salama, .(training_score_group), nrow)
 n_g_p
 ```
 
@@ -491,7 +477,7 @@ La edad de entrada en la empresa varía según el género?
 
 #Medios y SD de edad_inicio de los generos
 ```{r,eval=TRUE,echo=TRUE}
-dep_age<- aggregate(age~department, employee_promotion, function(x) c(mean = mean(x), sd = sd(x)))
+dep_age<- aggregate(age~department, data_Salama, function(x) c(mean = mean(x), sd = sd(x)))
 dep_age
 ```
 
@@ -501,8 +487,8 @@ dep_age
 
 
 ```{r,eval=TRUE,echo=TRUE,warning=FALSE, message=FALSE}
-data_means_dep_age <- aggregate(employee_promotion$age,                       # Means edad por department
-                        list(employee_promotion$department),
+data_means_dep_age <- aggregate(data_Salama$age,                       # Means edad por department
+                        list(data_Salama$department),
                         mean)
 data_means_dep_age
 ```
@@ -510,7 +496,7 @@ data_means_dep_age
 
 ```{r,eval=TRUE,echo=TRUE,warning=FALSE, message=FALSE}
 
-boxplot(employee_promotion$age ~ employee_promotion$department)                          
+boxplot(data_Salama$age ~ data_Salama$department)                          
 points(x = 1:nrow(data_means_dep_age),                            
        y = data_means_dep_age$x,
        col = "blue",
@@ -546,11 +532,11 @@ según los departamentos.
 library(plyr)
 
 #nombre de observaciones total
-n_emp_total <- nrow(employee_promotion)
+n_emp_total <- nrow(data_Salama)
 n_emp_total
 
 #nombre de empleadores en cada departamento
-n_emp_dep <- ddply(employee_promotion, .(department), nrow)
+n_emp_dep <- ddply(data_Salama, .(department), nrow)
 n_emp_dep
 
 #nombre de departamentos
@@ -568,7 +554,7 @@ qf(0.05, n_dep - 1, n_emp_total - n_dep, lower.tail=F)
 
 
 ```{r,eval=TRUE,echo=TRUE,warning=FALSE, message=FALSE}
-mi.aov = aov(age~department,data = employee_promotion)
+mi.aov = aov(age~department,data = data_Salama)
 summary(mi.aov)
 ```
 
@@ -599,7 +585,7 @@ La edad de entrada en la empresa varía según el género?
 
 
 ```{r,eval=TRUE,echo=TRUE}
-ag2 <- aggregate(employee_start_age~gender, employee_promotion, function(x) c(mean = mean(x), sd = sd(x)))
+ag2 <- aggregate(employee_start_age~gender, data_Salama, function(x) c(mean = mean(x), sd = sd(x)))
 ag2
 ```
 
@@ -609,8 +595,8 @@ ag2
 
 
 ```{r,eval=TRUE,echo=TRUE,warning=FALSE, message=FALSE}
-data_means <- aggregate(employee_promotion$employee_start_age,                       # Means por genero
-                        list(employee_promotion$gender),
+data_means <- aggregate(data_Salama$employee_start_age,                       # Means por genero
+                        list(data_Salama$gender),
                         mean)
 data_means
 ```
@@ -620,7 +606,7 @@ data_means
 
 ```{r,eval=TRUE,echo=TRUE,warning=FALSE, message=FALSE}
 
-boxplot(employee_promotion$employee_start_age ~ employee_promotion$gender)                          
+boxplot(data_Salama$employee_start_age ~ data_Salama$gender)                          
 points(x = 1:nrow(data_means),                            
        y = data_means$x,
        col = "red",
@@ -653,11 +639,11 @@ según los grupos de la variable gender
 library(plyr)
 
 #nombre de observaciones total
-n_obse_total <- nrow(employee_promotion)
+n_obse_total <- nrow(data_Salama)
 n_obse_total
 
 #nombre de observaciones para cada genero
-n_eee <- ddply(employee_promotion, .(gender), nrow)
+n_eee <- ddply(data_Salama, .(gender), nrow)
 n_eee
 
 #nombre de grupos
@@ -675,7 +661,7 @@ qf(0.05, n_grupos - 1, n_obse_total - n_grupos, lower.tail=F)
 
 
 ```{r,eval=TRUE,echo=TRUE,warning=FALSE, message=FALSE}
-mi.aov = aov(employee_start_age~gender,data = employee_promotion)
+mi.aov = aov(employee_start_age~gender,data = data_Salama)
 summary(mi.aov)
 ```
 
@@ -739,7 +725,7 @@ vamos a crear un subconjunto de nuestra base de datos con las variables numéric
 Matriz de correlaciones de estas variables
 
 ```{r,eval=TRUE,echo=TRUE,warning=FALSE, message=FALSE}
-ep_PC=employee_promotion[,c("no_of_trainings", "age", "previous_year_rating", "length_of_service", "avg_training_score")]
+ep_PC=data_Salama[,c("no_of_trainings", "age", "previous_year_rating", "length_of_service", "avg_training_score")]
 epc=cor(na.omit(ep_PC))
 epc
 ```
