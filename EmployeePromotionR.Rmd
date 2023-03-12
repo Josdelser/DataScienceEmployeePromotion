@@ -35,6 +35,15 @@ one-hot encoding para correlacion booleana?
     
 Salama:
 Johnsiel:
+
+  Grupal:
+    
+    Efectan los valores atipocos los resultados del modelo predictivo?
+
+  Individual:
+    Working...
+
+
 Jose Espaillat:
     
     
@@ -199,6 +208,132 @@ corrplot(correlation_matrix, method="color", type="upper", order="hclust")
 
 
 * Aquí empieza la parte de Salama
+
+
 * Aquí empieza la parte de Johnsiel
+
+¿Afectan los valores atípicos los resultados del modelo predictivo?
+
+Conociendo los resultados de nuestro modelo predictivo, nos surge la duda: de que manera podríamos mejorar los resultados de nuestro modelo, nos surgió la idea de trabajar con los datos atípicos.
+
+Procedimos a graficar mediante los gráficos de cajas los diferentes atributos del dataset para identificar cuales contenían valores atípicos.
+
+```{r}
+ggplot(data, aes( y = data$age)) +
+  stat_boxplot(geom ='errorbar') + 
+  geom_boxplot()
+
+ggplot(data, aes( y = data$length_of_service)) +
+  stat_boxplot(geom ='errorbar') + 
+  geom_boxplot()
+
+ggplot(data, aes( y = data$avg_training_score)) +
+  stat_boxplot(geom ='errorbar') + 
+  geom_boxplot()
+
+ggplot(data, aes( y = data$previous_year_rating)) +
+  stat_boxplot(geom ='errorbar') + 
+  geom_boxplot()
+```
+
+De los cuales "Edad" y "Cantidad de años de servicios" era los atributos que contenía valores atípicos o muy por encima de la media. 
+
+Tratamiento
+
+Por la cantidad de datos que se veían involucrados decidimos sustituirlo por el valor promedio de los mismos, esto para ambos atributos que hemos identificado.
+
+
+```{r}
+PruebaData <- data
+
+
+```
+
+```{r}
+q1 <- quantile(PruebaData$age, 0.25)
+q3 <- quantile(PruebaData$age, 0.75)
+iqr <- q3 - q1
+
+
+atipicos <- PruebaData$age < q1 - 1.5*iqr | PruebaData$age > q3 + 1.5*iqr
+
+
+media <- mean(PruebaData$age[!atipicos])
+
+PruebaData$age[atipicos] <- media
+```
+
+
+```{r}
+
+q1 <- quantile(PruebaData$length_of_service, 0.25)
+q3 <- quantile(PruebaData$length_of_service, 0.75)
+iqr <- q3 - q1
+
+
+atipicos <- PruebaData$length_of_service < q1 - 1.5*iqr | PruebaData$length_of_service > q3 + 1.5*iqr
+
+
+media <- mean(PruebaData$length_of_service[!atipicos])
+
+PruebaData$length_of_service[atipicos] <- media
+
+```
+
+
+Luego de haber sustituido realizamos los diagramas de cajas para ver la media.
+
+```{r}
+ggplot(PruebaData, aes( y = PruebaData$age)) +
+  stat_boxplot(geom ='errorbar') + 
+  geom_boxplot()
+```
+
+```{r}
+ggplot(PruebaData, aes( y = PruebaData$length_of_service)) +
+  stat_boxplot(geom ='errorbar') + 
+  geom_boxplot()
+```
+
+Procedemos a implementar nuevamente el modelo predictivo que utilizamos al inicio, pero utilizado el nuevo dataset.
+
+División del nuevo dataset en train y test
+
+
+```{r}
+
+```
+
+```{r}
+division2 <- createDataPartition(PruebaData$is_promoted, p = .7, list = FALSE, times = 1)
+train2 <- PruebaData[division, ]
+test2  <- PruebaData[-division, ]
+
+```
+
+Entremiento del modelo 
+
+```{r}
+valcruz2 <- trainControl(method = "cv", number = 10)
+
+arbolfit2 <- train(is_promoted ~ ., data = train2, method = "rpart",
+                 trControl = valcruz2, tuneLength = 10)
+```
+
+Creación de matriz de confusión 
+
+```{r}
+
+prediccionTest2 <- predict(arbolfit2, newdata = test2)
+confusionMatrix(table(prediccionTest2, test2$is_promoted))
+
+```
+
+En vista de los resultados obtenidos, podemos notar que tenemos un accuracy el 93.27 en esta nueva predicción, frente a ala anterior que fue del 92.84, por lo que hemos tenido una mejora del 0.33.
+
+En conclusión, Hemos obtenido una muy peque mejora en el entrenamiento de este nuevo modelo, lo que nos da como resultado que los valores atípicos, o valores por fuera de la media, no afectan potencialmente la predicción.
+
+
+
 * Aquí empieza la parte de Jose Espaillat
 
