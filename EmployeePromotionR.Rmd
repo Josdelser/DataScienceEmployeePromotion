@@ -30,10 +30,20 @@ Jose Delgado:
  
 
     
+Salama Mohamed-fadel Sidna:
 
+  -Grupal
+  
+    La media de edad varia segunel el departamento ? 
     
     
-Salama:
+  -Individual:
+    
+    La edad de incorporación del empleador en la compañía varía según el género? 
+    Podemos reducir la dimensión, y que son los componentes que mas explica la variabilidad de nuestra dataset? 
+
+
+
 Johnsiel:
 Jose Espaillat:
     
@@ -350,9 +360,60 @@ Esto resultados son la V de cramer que nos da la relacion. Observamos, como tamb
 * Aquí empieza la parte de Salama
 
 
+```{r,eval=TRUE,echo=TRUE}
+# supervisado 
+install.packages("tidyverse")
+install.packages("dplyr")
+install.packages("magrittr")
+install.packages("caret")
+install.packages("plyr")
+install.packages("rattle")
+install.packages("gapminder")
+install.packages("R.devices")
+install.packages("RWeka")
+install.packages("rpart.plot")
+install.packages("RGtk2")
+install.packages("rattle")
 
 
-<strong>Lectura del dataset train.csv</strong>
+#no supervisado
+install.packages("factoextra")
+install.packages("gridExtra")
+install.packages("animation")
+install.packages("ggfortify")
+
+
+
+
+# libraries
+library(ggplot2)
+library(dplyr)
+library(magrittr)
+
+library(lubridate)
+library(tidyverse)
+library(rpart)
+library(rattle)
+library(RColorBrewer)
+library(caret)
+
+library(cluster)
+library(factoextra)
+library(gridExtra)
+library(stats)
+library(ggfortify)
+library(class)
+library(plyr)
+
+
+#seed
+set.seed(1)
+set.seed(678)
+set.seed(123)
+```
+
+
+<strong>Lectura del dataset data_Salama.csv</strong>
 ```{r,eval=TRUE,echo=TRUE}
 data_Salama <- read.csv ("train.csv")
 head(data_Salama,5)
@@ -387,7 +448,7 @@ colSums(is.na(data_Salama))
 ******
 
 
-<strong>la edad a la que el empleado entró en la compañia</strong>
+<strong>la edad de incorporación del empleador en la compañía</strong>
 ```{r,eval=TRUE,echo=TRUE}
 data_Salama <- data_Salama %>%
 mutate(data_Salama, employee_start_age = as.numeric(data_Salama$age - data_Salama$length_of_service))
@@ -396,7 +457,7 @@ head(data_Salama,5)
 
 
 
-<strong>Recodificación de la variable "AGE" en cuatro grupos</strong>
+<strong>Recodificación de la variable "age" en cuatro grupos</strong>
 ```{r,eval=TRUE,echo=TRUE}
 
 min_age = min(data_Salama$age)
@@ -422,9 +483,7 @@ n_g_e
 
 ```
 
-
-
-
+<strong>Recodificación de la variable "avg_training_score" en grupos</strong>
 ```{r,eval=TRUE,echo=TRUE}
 
 data_Salama <- data_Salama[order(-data_Salama$avg_training_score),]
@@ -468,32 +527,24 @@ n_g_p
 ```
 
 
+
+******
 # ANOVA DEPARATAMENTOS
+******
 
 
-La edad de entrada en la empresa varía según el género?
+La media de edad varia segunel departamento ? 
+
 <ol>
-<li>La media y la desviación estandar de la variable age para cada departamento "department" 
-
-#Medios y SD de edad_inicio de los generos
-```{r,eval=TRUE,echo=TRUE}
-dep_age<- aggregate(age~department, data_Salama, function(x) c(mean = mean(x), sd = sd(x)))
-dep_age
-```
-
-
-
-<li>boxplot de la variable employee_start_age para cada grupo de la variable gender
-
-
+<li>Media edad por department
 ```{r,eval=TRUE,echo=TRUE,warning=FALSE, message=FALSE}
-data_means_dep_age <- aggregate(data_Salama$age,                       # Means edad por department
+
+data_means_dep_age <- aggregate(data_Salama$age,                       
                         list(data_Salama$department),
                         mean)
 data_means_dep_age
 ```
-
-
+<li>boxplot de la media de edad de cada departamento
 ```{r,eval=TRUE,echo=TRUE,warning=FALSE, message=FALSE}
 
 boxplot(data_Salama$age ~ data_Salama$department)                          
@@ -511,14 +562,10 @@ text(x = 1:nrow(data_means_dep_age),
 
 
 </ol>
+Realiza un análisis ANOVA para determinar si hay diferencias significativas en los valores medios de la variable edad 
+según los departamentos.
 
-******
-# ANOVA-1 
-******
-
-Realiza un análisis ANOVA para determinar si hay diferencias significativas en los valores medios de la variable edad según los departamentos
-
-Empezamos con la hipotesis:
+Hipotesis:
 
 H0:  No hay diferencias significativas en los valores medios de la variable edad 
 según los departamentos.
@@ -545,14 +592,12 @@ n_dep
 
 ```
 
-
-
 #Obtenemos el valor crítico de una distribución de Fisher para grados de libertad n_dep - 1 y n_emp_total - n_dep, y para una probabilidad 0.05
 ```{r,eval=TRUE,echo=TRUE,warning=FALSE, message=FALSE}
 qf(0.05, n_dep - 1, n_emp_total - n_dep, lower.tail=F)
 ```
 
-
+El valor F y su probabilidad
 ```{r,eval=TRUE,echo=TRUE,warning=FALSE, message=FALSE}
 mi.aov = aov(age~department,data = data_Salama)
 summary(mi.aov)
@@ -560,42 +605,27 @@ summary(mi.aov)
 
 
 <ul>
-<li> ¿Cuáles son las conclusiones del análisis? 
+<li> Conclusiones
 
 la propia función R aov() ya nos dice que la probabilidad para el valor F 178 se sitúa en menos de 2e-14%.
-Tenemos un valor F (178) posterior al valor  critico (1.938582), entonces rechazamoas la hipótesis nula. 
+Tenemos un valor F (178) posteriora mucho al valor  critico (1.938582), entonces rechazamoas la hipótesis nula. 
 
-<li> ¿Se podía esperar este resultado de acuerdo a los análisis realizados en el apartado anterior?
-Si este resultado es de acuerdo a los análisis realizados en el apartado anterior por que hemos tenido dos medios con diferencia 
-muy alta como por ejemplo el departamento de Financia tiene la media de 32.1 de edad y el de operacion 36.1 de edad. 
-
+<li>Este resultado es de acuerdo a los análisis realizados en el apartado anterior por que hemos tenido dos medios con diferencia 
+muy grande como por ejemplo el departamento de Financia tiene la media de edad 32.1 de edad y el departamento de operacion tine media 36.1 de edad. 
 </ul>
 
 
-
+******
 # ANOVA GENERO
+******
 
 
-
-La edad de entrada en la empresa varía según el género?
+La edad de incorporación del empleador en la compañía varía según el género?
 <ol>
-<li>La media y la desviación estandar de la variable Edad de entrada employee_start_age para cada grupo de la variable gender 
 
-#Medios y SD de edad_inicio de los generos
-
-
-```{r,eval=TRUE,echo=TRUE}
-ag2 <- aggregate(employee_start_age~gender, data_Salama, function(x) c(mean = mean(x), sd = sd(x)))
-ag2
-```
-
-
-
-<li>boxplot de la variable employee_start_age para cada grupo de la variable gender
-
-
+<li># Media de edad de incorporación del empleador en la compañía por genero
 ```{r,eval=TRUE,echo=TRUE,warning=FALSE, message=FALSE}
-data_means <- aggregate(data_Salama$employee_start_age,                       # Means por genero
+data_means <- aggregate(data_Salama$employee_start_age,                       
                         list(data_Salama$gender),
                         mean)
 data_means
@@ -603,7 +633,7 @@ data_means
 
 
 
-
+<li>boxplot de la variable employee_start_age para cada uno de los genero
 ```{r,eval=TRUE,echo=TRUE,warning=FALSE, message=FALSE}
 
 boxplot(data_Salama$employee_start_age ~ data_Salama$gender)                          
@@ -620,19 +650,17 @@ text(x = 1:nrow(data_means),
 
 </ol>
 
-******
-# ANOVA-1 
-******
+
 
 Realiza un análisis ANOVA para determinar si hay diferencias significativas en los valores medios de la variable employee_start_age según los grupos de la variable gender 
 
-Empezamos con la hipotesis:
+Hipotesis:
 
 H0:  No hay diferencias significativas en los valores medios de la variable employee_start_age 
-según los grupos de la variable gender
+según los grupos de la variable gender.
 
 H1:  hay diferencias significativas en los valores medios de la variable employee_start_age 
-según los grupos de la variable gender
+según los grupos de la variable gender.
 
 
 ```{r,eval=TRUE,echo=TRUE}
@@ -642,7 +670,7 @@ library(plyr)
 n_obse_total <- nrow(data_Salama)
 n_obse_total
 
-#nombre de observaciones para cada genero
+#nombre de observaciones para cada uno de los genero
 n_eee <- ddply(data_Salama, .(gender), nrow)
 n_eee
 
@@ -651,8 +679,6 @@ n_grupos <- nrow(n_eee)
 n_grupos
 
 ```
-
-
 
 #Obtenemos el valor crítico de una distribución de Fisher para grados de libertad n_grupos - 1 y n_obse_total - n_grupos, y para una probabilidad 0.05
 ```{r,eval=TRUE,echo=TRUE,warning=FALSE, message=FALSE}
@@ -666,63 +692,27 @@ summary(mi.aov)
 ```
 
 
-
-
 <ul>
-<li> ¿Cuáles son las conclusiones del análisis? 
+<li> Conclusiones 
 
 la propia función R aov() ya nos dice que la probabilidad para el valor F 2.701 se sitúa en 10%.
-Tenemos un valor F (2.701) inferior al valor  critico (3.841628), entonces aceptaremos la hipótesis nula. 
+Tenemos un valor F (2.701) inferior al valor  critico (3.841628), entonces aceptamos la hipótesis nula. 
 
-<li> ¿Se podía esperar este resultado de acuerdo a los análisis realizados en el apartado anterior?
-Si este resultado es de acuerdo a los análisis realizados en el apartado anterior por que hemos tenido dos medios con diferencia 
-muy baja ente 29.001226 y 28.911783 
+<li> Este resultado es de acuerdo a los análisis realizados en el apartado anterior por que hemos tenido dos medios con diferencia 
+muy baja ente 29.001226 y 28.911783. 
 
 </ul>
 
-******
-# ANOVA-2
-******
 
-Ahora hemos realizado un ANOVA de la variable Edad según los grupos generados por la variable training_score_group Se muestra la salida 
-del ANOVA (ver fichero HTML).
-
-
-<ul>
-<li> ¿Cuáles son las conclusiones del análisis? 
-
-Tenemos:
-Nombre de grupos de puntaje es : 3 + 1 = 4.
-Nombre de observaciones es 52244(grado de libertad intra grupos) + 3 + 1 = 52248. 
-
-Varianza entre grupos es: 26174    
-Varianza intra grupos: 3033465      
-
-F-value es :150.3 
-El p-value del F-statistic: <2e-16
-
-
-El valor critico:
-```{r,eval=TRUE,echo=TRUE,warning=FALSE, message=FALSE}
-qf(0.05, 3, 52248, lower.tail=F)
-```
-
-Como la F-value 150.3 es muy superior al valor critico que es 2.605079, entonces hay diferencias significativas en los valores medios de la variable age según los grupos de la variable training_score_group.
-
-<li> Sólo con este análisis, ¿podríamos afirmar que hay diferencias significativas en la media de la variable Edad para los grupos de score 1 y 4?
-No es bastante suficiente para saber esta variedad ente los medios en nivel de que grupos precisamente, entonces con este analisis sola no podemos saber.
-</ul>
 
 ******
-# Componentes principales (2)
+# Técnica de reducción de la dimensión
 ******
 <ol>
 <li><b>Preparacion de datos</b></li>
-Análisis de componentes principales ( técnica de reducción de la dimensión), 
-vamos a crear un subconjunto de nuestra base de datos con las variables numéricas, y analizar sus correlaciones
+Analisis de componentes principales creando un subconjunto de nuestra base de datos con las variables numéricas, y analizar sus correlaciones.
 
-
-Matriz de correlaciones de estas variables
+Empezamos con la matriz de correlaciones de estas variables
 
 ```{r,eval=TRUE,echo=TRUE,warning=FALSE, message=FALSE}
 ep_PC=data_Salama[,c("no_of_trainings", "age", "previous_year_rating", "length_of_service", "avg_training_score")]
@@ -730,7 +720,7 @@ epc=cor(na.omit(ep_PC))
 epc
 ```
 
-Para Interpretar los resultados, en primero si hay valor de correlacion pisitivo eso significa que los dos variables aumentan y bajan en paralelo.
+Para Interpretar los resultados, en primero si hay valor de correlacion positivo eso significa que los dos variables aumentan y bajan en paralelo.
 
 <ul>
 <li> Una correlacion de 4.6% entre los dos variables no_of_trainings y avg_training_score.
@@ -745,7 +735,6 @@ Para Interpretar los resultados, en primero si hay valor de correlacion pisitivo
 # PCA (3)
 ******
 Realizar la técnica PCA con las variables de la Matrix
-
 ```{r,eval=TRUE,echo=FALSE,warning=FALSE, message=FALSE}
 pca <- princomp(epc)
 pca
@@ -753,7 +742,6 @@ pca
 ```
 
 Contribucion de cada variable a cada componente:
-
 ```{r,eval=TRUE,echo=FALSE,warning=FALSE, message=FALSE}
 print(cumsum(pca$sdev^2)/sum(pca$sdev^2))
 
@@ -764,9 +752,8 @@ El componente 1 contiene el 52% de la variabilidad,
 el componente 1 más el componente 2 acumulan el 78% de la variabilidad,
 el componente 1 más el componente 2 más el componente 3 acumulan el 96% de la variabilidad, y así succesivamente.
 
-De este modo vemos cómo solo con los tres primeros componentes podemos explicar el 96,77% de la variabilidad de la dataset, 
-de manera que el estudio de la proyección del juego de datos inicial sobre estos tres componentes será suficiente para entender aplicar una predicion rezonables. 
-
+Vemos que solamente con los tres primeros componentes podemos explicar el 96,77% de la variabilidad de la dataset, 
+de manera que el estudio de nuestra dataset principal sobre estos tres componentes será suficiente para entender aplicar una predicion rezonables.  
 
 
 
