@@ -50,22 +50,65 @@ Jose Espaillat:
     
 Cada miembro realizará la documentación de ambas partes asignadas. Además en el documento se indicará donde empieza y acaba la parte de cada miembro para que así sea mas sencilla su evaluación. 
 
-```{r}
+
+```{r,eval=TRUE,echo=TRUE}
+
+
+#Packages
+
+install.packages("tidyverse")
+install.packages("dplyr")
+install.packages("magrittr")
+install.packages("caret")
+install.packages("plyr")
+install.packages("rattle")
+install.packages("gapminder")
+install.packages("R.devices")
+install.packages("RWeka")
+install.packages("rpart.plot")
+install.packages("RGtk2")
+install.packages("rattle")
+
+
+install.packages("factoextra")
+install.packages("gridExtra")
+install.packages("animation")
+install.packages("ggfortify")
+
+
+# libraries
+
+
 library(dplyr)
 library(rpart)
 library(rpart.plot)
 library(rattle)
-library(dplyr)
 library(ggplot2)
 library(RColorBrewer)
 library(ggfortify)
 library(vcd)
 
-
 require(corrplot)
 
 
+library(magrittr)
+library(lubridate)
+library(tidyverse)
+library(caret)
+library(cluster)
+library(factoextra)
+library(gridExtra)
+library(stats)
+
+library(class)
+library(plyr)
+
+
+#seed
+set.seed(1)
 set.seed(28)
+set.seed(678)
+set.seed(123)
 ```
 
 
@@ -359,60 +402,7 @@ Esto resultados son la V de cramer que nos da la relacion. Observamos, como tamb
 
 * Aquí empieza la parte de Salama
 
-
-```{r,eval=TRUE,echo=TRUE}
-# supervisado 
-install.packages("tidyverse")
-install.packages("dplyr")
-install.packages("magrittr")
-install.packages("caret")
-install.packages("plyr")
-install.packages("rattle")
-install.packages("gapminder")
-install.packages("R.devices")
-install.packages("RWeka")
-install.packages("rpart.plot")
-install.packages("RGtk2")
-install.packages("rattle")
-
-
-#no supervisado
-install.packages("factoextra")
-install.packages("gridExtra")
-install.packages("animation")
-install.packages("ggfortify")
-
-
-
-
-# libraries
-library(ggplot2)
-library(dplyr)
-library(magrittr)
-
-library(lubridate)
-library(tidyverse)
-library(rpart)
-library(rattle)
-library(RColorBrewer)
-library(caret)
-
-library(cluster)
-library(factoextra)
-library(gridExtra)
-library(stats)
-library(ggfortify)
-library(class)
-library(plyr)
-
-
-#seed
-set.seed(1)
-set.seed(678)
-set.seed(123)
-```
-
-
+En esta parte empiezo con la lectura del dataset principal en nueva ds "data_Salama", identificar los diferentes variable y sus tipos ,y el nombre de variable y observaciones en la dataset principal.
 <strong>Lectura del dataset data_Salama.csv</strong>
 ```{r,eval=TRUE,echo=TRUE}
 data_Salama <- read.csv ("train.csv")
@@ -420,7 +410,6 @@ head(data_Salama,5)
 ```
 
 <strong>Descripcion de dataset data_Salama</strong>
-
 ```{r,eval=TRUE,echo=TRUE}
 str(data_Salama)
 
@@ -443,97 +432,14 @@ colSums(is.na(data_Salama))
 
 
 
-******
-# Crear variables
-******
-
-
-<strong>la edad de incorporación del empleador en la compañía</strong>
-```{r,eval=TRUE,echo=TRUE}
-data_Salama <- data_Salama %>%
-mutate(data_Salama, employee_start_age = as.numeric(data_Salama$age - data_Salama$length_of_service))
-head(data_Salama,5)
-```
-
-
-
-<strong>Recodificación de la variable "age" en cuatro grupos</strong>
-```{r,eval=TRUE,echo=TRUE}
-
-min_age = min(data_Salama$age)
-max_age = max(data_Salama$age)
-lg_age = as.numeric(as.integer( (  max_age - min_age)/4) )
-
-data_Salama <- data_Salama %>%
-mutate(data_Salama, age_group = ifelse(data_Salama$age >= min_age & data_Salama$age < (min_age + lg_age), "twenties",
- ifelse(data_Salama$age >= (min_age + lg_age) & data_Salama$age < (min_age + (2 * lg_age)), "thirties", 
-  ifelse(data_Salama$age >= (min_age + (2 * lg_age)) & data_Salama$age < (min_age + (3 * lg_age)), "forties",
-    ifelse(data_Salama$age >= (min_age + (3 * lg_age)) & data_Salama$age <= (min_age + (4 * lg_age)), "fifties", "Unclassified")))))
-head(data_Salama,5)
-
-```
-
-
-<strong>Nombre de instancias de cada grupo de edad</strong>
-
-```{r,eval=TRUE,echo=TRUE}
-library(plyr)
-n_g_e <- ddply(data_Salama, .(age_group), nrow)
-n_g_e
-
-```
-
-<strong>Recodificación de la variable "avg_training_score" en grupos</strong>
-```{r,eval=TRUE,echo=TRUE}
-
-data_Salama <- data_Salama[order(-data_Salama$avg_training_score),]
-max_value = data_Salama$avg_training_score[1]
-
-# Calcular los cuartiles de la dataset
-max_rows = as.numeric(as.integer(nrow(data_Salama)))
-Q2_r= as.numeric( ( max_rows + 1) / 2 )
-Q1_r = as.numeric( (as.integer(Q2_r) + 1) / 2 )
-Q3_r = as.numeric(  ( as.integer(max_rows) + (as.integer(Q2_r) + 1) )/ 2 )
-
-
-# Covertir los cuartiles a integers para poder seleccionarlos en la dataset
-Q1_i = as.integer(Q1_r)
-Q2_i = as.integer(Q2_r)
-Q3_i = as.integer(Q3_r)
-
-
-# Extraer los valores de puntaje de estas lineas
-Q1_v = data_Salama$avg_training_score[Q1_i]
-Q2_v = data_Salama$avg_training_score[Q2_i]
-Q3_v = data_Salama$avg_training_score[Q3_i]
-
-data_Salama <- data_Salama %>%
-mutate(data_Salama, training_score_group = ifelse( is.na(data_Salama$avg_training_score), "Abs",
- ifelse(data_Salama$avg_training_score <= Q3_v, "D", 
-  ifelse(data_Salama$avg_training_score <= Q2_v, "C",
-    ifelse(data_Salama$avg_training_score <= Q1_v , "B", 
-      ifelse(data_Salama$avg_training_score <= max_value, "A", "Puntaje no clasificado"))))))
-head(data_Salama,5)
-
-```
-
-
-<strong>Nombre de instancias de cada grupo de puntaje</strong>
-
-```{r,eval=TRUE,echo=TRUE}
-library(plyr)
-n_g_p <- ddply(data_Salama, .(training_score_group), nrow)
-n_g_p
-```
-
-
+<Strong>La media de edad varia segunel departamento ? </Strong>
 
 ******
 # ANOVA DEPARATAMENTOS
 ******
 
 
-La media de edad varia segunel departamento ? 
+
 
 <ol>
 <li>Media edad por department
@@ -616,13 +522,21 @@ muy grande como por ejemplo el departamento de Financia tiene la media de edad 3
 </ul>
 
 
+
+<Strong>La edad de incorporación del empleador en la compañía varía según el género?</Strong>
+
 ******
 # ANOVA GENERO
 ******
 
-
-La edad de incorporación del empleador en la compañía varía según el género?
 <ol>
+
+<li>Crear la variable edad de incorporación del empleador en la compañía
+```{r,eval=TRUE,echo=TRUE}
+data_Salama <- data_Salama %>%
+mutate(data_Salama, employee_start_age = as.numeric(data_Salama$age - data_Salama$length_of_service))
+head(data_Salama,5)
+```
 
 <li>Media de edad de incorporación del empleador en la compañía por genero
 ```{r,eval=TRUE,echo=TRUE,warning=FALSE, message=FALSE}
@@ -632,9 +546,7 @@ data_means <- aggregate(data_Salama$employee_start_age,
 data_means
 ```
 
-
-
-<li>boxplot de la variable employee_start_age para cada uno de los genero
+<li>Presentar un boxplot de la variable employee_start_age para cada uno de los generos para haber una idea sobre la diferencia antes a pasar a defender la hipotesis
 ```{r,eval=TRUE,echo=TRUE,warning=FALSE, message=FALSE}
 
 boxplot(data_Salama$employee_start_age ~ data_Salama$gender)                          
@@ -648,7 +560,6 @@ text(x = 1:nrow(data_means),
      col = "red")
 
 ```
-
 </ol>
 
 
@@ -668,11 +579,9 @@ library(plyr)
 
 #nombre de observaciones total
 n_obse_total <- nrow(data_Salama)
-n_obse_total
 
-#nombre de observaciones para cada uno de los genero
+#nombre de observaciones para cada uno de los generos
 n_eee <- ddply(data_Salama, .(gender), nrow)
-n_eee
 
 #nombre de grupos
 n_grupos <- nrow(n_eee)
@@ -704,6 +613,12 @@ muy baja ente 29.001226 y 28.911783.
 </ul>
 
 
+
+
+<strong>Cuáles son los componentes que más explican la variabilidad de nuestro dataset?</strong>
+
+
+Para responder a esta pregunta seguimos la tecnica de reduccion y luego aplicamos la tecnica de analisis de los componentes principales PCA.
 
 ******
 # Técnica de reducción de la dimensión
