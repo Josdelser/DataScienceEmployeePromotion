@@ -592,8 +592,9 @@ n_dep
 
 ```
 
-#Obtenemos el valor crítico de una distribución de Fisher para grados de libertad n_dep - 1 y n_emp_total - n_dep, y para una probabilidad 0.05
+
 ```{r,eval=TRUE,echo=TRUE,warning=FALSE, message=FALSE}
+#Obtenemos el valor crítico de una distribución de Fisher para grados de libertad n_dep - 1 y n_emp_total - n_dep, y para una probabilidad 0.05
 qf(0.05, n_dep - 1, n_emp_total - n_dep, lower.tail=F)
 ```
 
@@ -623,7 +624,7 @@ muy grande como por ejemplo el departamento de Financia tiene la media de edad 3
 La edad de incorporación del empleador en la compañía varía según el género?
 <ol>
 
-<li># Media de edad de incorporación del empleador en la compañía por genero
+<li>Media de edad de incorporación del empleador en la compañía por genero
 ```{r,eval=TRUE,echo=TRUE,warning=FALSE, message=FALSE}
 data_means <- aggregate(data_Salama$employee_start_age,                       
                         list(data_Salama$gender),
@@ -652,8 +653,6 @@ text(x = 1:nrow(data_means),
 
 
 
-Realiza un análisis ANOVA para determinar si hay diferencias significativas en los valores medios de la variable employee_start_age según los grupos de la variable gender 
-
 Hipotesis:
 
 H0:  No hay diferencias significativas en los valores medios de la variable employee_start_age 
@@ -664,6 +663,7 @@ según los grupos de la variable gender.
 
 
 ```{r,eval=TRUE,echo=TRUE}
+
 library(plyr)
 
 #nombre de observaciones total
@@ -709,8 +709,8 @@ muy baja ente 29.001226 y 28.911783.
 # Técnica de reducción de la dimensión
 ******
 <ol>
-<li><b>Preparacion de datos</b></li>
-Analisis de componentes principales creando un subconjunto de nuestra base de datos con las variables numéricas, y analizar sus correlaciones.
+<li><b>Analisis de componentes principales creando un subconjunto de nuestra base de datos con las variables numéricas, y analizar sus correlaciones.</b></li>
+</ol>
 
 Empezamos con la matriz de correlaciones de estas variables
 
@@ -719,8 +719,6 @@ ep_PC=data_Salama[,c("no_of_trainings", "age", "previous_year_rating", "length_o
 epc=cor(na.omit(ep_PC))
 epc
 ```
-
-Para Interpretar los resultados, en primero si hay valor de correlacion positivo eso significa que los dos variables aumentan y bajan en paralelo.
 
 <ul>
 <li> Una correlacion de 4.6% entre los dos variables no_of_trainings y avg_training_score.
@@ -732,28 +730,37 @@ Para Interpretar los resultados, en primero si hay valor de correlacion positivo
 
 
 ******
-# PCA (3)
+# PCA 
 ******
-Realizar la técnica PCA con las variables de la Matrix
+</ol>
+<li><b>Realizar la técnica PCA con las variables de la Matrix</b></li>
+
 ```{r,eval=TRUE,echo=FALSE,warning=FALSE, message=FALSE}
 pca <- princomp(epc)
 pca
 
 ```
 
-Contribucion de cada variable a cada componente:
+
+<li><b>Contribucion de cada variable a cada componente</b></li>
 ```{r,eval=TRUE,echo=FALSE,warning=FALSE, message=FALSE}
 print(cumsum(pca$sdev^2)/sum(pca$sdev^2))
-
 ```
+</ol>
 
 
-El componente 1 contiene el 52% de la variabilidad,
-el componente 1 más el componente 2 acumulan el 78% de la variabilidad,
-el componente 1 más el componente 2 más el componente 3 acumulan el 96% de la variabilidad, y así succesivamente.
 
-Vemos que solamente con los tres primeros componentes podemos explicar el 96,77% de la variabilidad de la dataset, 
+<ul>
+<li> El componente 1 contiene el 52% de la variabilidad.
+<li> El componente 1 más el componente 2 acumulan el 78% de la variabilidad.
+<li> El componente 1 más el componente 2 más el componente 3 acumulan el 96% de la variabilidad, y así succesivamente.
+<li> Vemos que solamente con los tres primeros componentes podemos explicar el 96,77% de la variabilidad de la dataset, 
 de manera que el estudio de nuestra dataset principal sobre estos tres componentes será suficiente para entender aplicar una predicion rezonables.  
+</ul>
+
+
+
+
 
 
 
