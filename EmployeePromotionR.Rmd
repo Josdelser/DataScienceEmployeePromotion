@@ -340,7 +340,7 @@ confusionMatrix(table(prediccionTest2, test2$is_promoted))
 
 ```
 
-En vista de los resultados obtenidos, podemos notar que tenemos un accuracy el 93.24 en esta nueva predicción, frente a ala anterior que fue del 92.84, por lo que hemos tenido una mejora del 0.30.
+En vista de los resultados obtenidos, podemos notar que tenemos un accuracy el 93.24 en esta nueva predicción, frente a ala anterior que fue del 92.84, por lo que hemos tenido una mejora de 0.40.
 
 En conclusión, Hemos obtenido una muy peque mejora en el entrenamiento de este nuevo modelo, lo que nos da como resultado que los valores atípicos, o valores por fuera de la media, no afectan potencialmente la predicción.
 
