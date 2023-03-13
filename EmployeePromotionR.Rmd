@@ -258,6 +258,7 @@ Por la cantidad de datos que se veían involucrados decidimos sustituirlo por el
 
 
 ```{r}
+#Referenciaremos el mismo dataset ya preprocesado y utilizado para hacer la predicción
 PruebaData <- data
 
 ```
@@ -276,7 +277,6 @@ media <- mean(PruebaData$age[!atipicos])
 
 PruebaData$age[atipicos] <- media
 ```
-
 
 Tratamiento del atributo Cantidad de Servicio
 
@@ -297,7 +297,7 @@ PruebaData$length_of_service[atipicos] <- media
 ```
 
 
-Luego de haber sustituido realizamos los diagramas de cajas para ver la media.
+Luego de haber sustituido los valores atípicos, realizamos los diagramas de cajas para ver la media.
 
 ```{r}
 ggplot(PruebaData, aes( y = PruebaData$age)) +
@@ -314,7 +314,6 @@ ggplot(PruebaData, aes( y = PruebaData$length_of_service)) +
 Procedemos a implementar nuevamente el modelo predictivo que utilizamos al inicio, pero utilizado el nuevo dataset.
 
 División del nuevo dataset en train y test
-
 
 ```{r}
 division2 <- createDataPartition(PruebaData$is_promoted, p = .7, list = FALSE, times = 1)
@@ -341,7 +340,7 @@ confusionMatrix(table(prediccionTest2, test2$is_promoted))
 
 ```
 
-En vista de los resultados obtenidos, podemos notar que tenemos un accuracy el 93.27 en esta nueva predicción, frente a ala anterior que fue del 92.84, por lo que hemos tenido una mejora del 0.33.
+En vista de los resultados obtenidos, podemos notar que tenemos un accuracy el 93.24 en esta nueva predicción, frente a ala anterior que fue del 92.84, por lo que hemos tenido una mejora del 0.30.
 
 En conclusión, Hemos obtenido una muy peque mejora en el entrenamiento de este nuevo modelo, lo que nos da como resultado que los valores atípicos, o valores por fuera de la media, no afectan potencialmente la predicción.
 
