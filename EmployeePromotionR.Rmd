@@ -22,34 +22,17 @@ Para organizarnos, hemos decidido crear un repositorio en GitHub (https://github
 
 A continuación, se detalla la asignación de cada miembro:
 
+Preguntas resueltas:
 
-Jose Delgado:
-
-  -Grupal
-  
     ¿Nos puede ayudar la visualización a sacar conclusiones temprana?
     
     ¿Podemos sacar conclusiones tempranas de que variables afectan prediciendo si será promovido un empleado?
     
     
-  -Individual:
-    
-    ¿Quitando variables mejorará el arbol?
-    
-    
-    Uso de la correlacion cramer para responder a ¿Existe una correlación significativa entre las variables categóricas            y la variable objetivo "is_promoted"?
- 
-
-    
 
     
     
-Salama:
-Johnsiel:
-Jose Espaillat:
-    
-    
-Cada miembro realizará la documentación de ambas partes asignadas. Además en el documento se indicará donde empieza y acaba la parte de cada miembro para que así sea mas sencilla su evaluación. 
+Cada miembro realizará la documentación de su parte grupal asignada. Además en el documento se indicará donde empieza y acaba la parte de cada miembro para que así sea mas sencilla su evaluación. 
 
 ```{r}
 library(dplyr)
@@ -314,85 +297,4 @@ Observamos que la variable av_training_score es bastante importante ya que por e
 
 La conclusión final que sacamos de estas gráficas está bastante relacionada con la de la predicción. Vemos que ciertas variables tienden a afectar de manera directa a la promoción y tanto en gráficas como en predicción concuerdan unas con otras.
 
-
-Jose preguntas individuales:
-
-
-    ¿Quitando variables mejorará el árbol?
-    
-
-Hemos visto que avg_training_score tiene mucho peso, por lo que me surgió la pregunta de que si eliminando esta variable que otras variables afectan, además de ver si mejoramos el modelo.
-
-
-```{r}
-datajosearbol2 <-datajose
-```
-
-```{r}
-arbol2 <- rpart(is_promoted ~ . - avg_training_score, data = datajosearbol2, method = "class")
-fancyRpartPlot(arbol2)
-
-```
-Directamente vemos que nos da resultados parecidos al árbol entrenado, volviendo a afirmar que el modelo está bien ajustado. Con esta conclusión nos ahorramos de volver a predecir ya que intuimos que en el mejor de los casos va a igualar a los resultados anteriores. Gracias a un análisis previo nos hemos ahorrado esta parte. 
-
-
-Segunda pregunta individual:
-
-
-    Uso de la correlación cramer para responder a ¿Existe una correlación significativa entre las variables categórica del         dataset y la variable objetivo "is_promoted"?
-    
-La correlación de cramer es un coeficiente que nos indica el grado de relación entre dos variables categóricas, de esta manera si probamos todas la variables categorías frente a is_promoted podremos analizar cuáles son las que mayor relación tienen. Obviamos las variables como región, género y recuitment_channel ya que previamente hemos visto que no tienen una relación importante. Se realizará con departamentos, estudios, género y premios ganados
-
-
-Para ello primero tenemos que crear tablas de contingencias con las variables
-
-
-```{r}
-tabladepa <- table(datajose$department, datajose$is_promoted)
-tablagen <- table(datajose$gender, datajose$is_promoted)
-tablaedu <- table(datajose$education, datajose$is_promoted)
-tablawards <- table(datajose$awards_won, datajose$is_promoted)
-```
- 
- 
-Luego con la función assocstats() calculamos diferentes estadísticas como la correlación de Pearson, chi-cuadrado y el estadístico V de cramer, que es el que buscamos
-
-```{r}
-cramerdepa<-assocstats(tabladepa)
-cramergen<-assocstats(tablagen)
-crameredu<-assocstats(tablaedu)
-cramerawards<-assocstats(tablawards)
-```
-
-```{r}
-cramerdepa$cramer
-cramergen$cramer
-crameredu$cramer
-cramerawards$cramer
-```
-Estos resultados son la V de cramer que nos da la correlación. Observamos, como también hemos demostrado arriba con las gráficas, que tener un premio ganado tiene cierta importancia y sobre todo respecto al departamento  y educación. Volvemos a corroborar que el género no influyen en nada a la hora de ser promovido.
-
-Finalmente después de realizar todo este proceso de análisis he llegado a la conclusión de que un buen estudio de los datos y conocimiento del desafío puede ahorrarnos horas de investigación y elección de caminos que no llevan a nada. Luego de realizar todo esto, podríamos volver a limpiar el dataset eliminando columnas bajo un criterio de correlación, es decir prescindir de variables que no afectan a la promoción y centrarnos en las que sí
-
-
-*Aqui acaba Jose Delgado
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-* Aquí empieza la parte de Salama
-* Aquí empieza la parte de Johnsiel
-* Aquí empieza la parte de Jose Espaillat
 
