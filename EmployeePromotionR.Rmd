@@ -202,3 +202,141 @@ corrplot(correlation_matrix, method="color", type="upper", order="hclust")
 * Aquí empieza la parte de Johnsiel
 * Aquí empieza la parte de Jose Espaillat
 
+
+## ¿Existe asociación entre el género y la promoción de los empleados en cada departamento de la empresa?
+
+```{r}
+#Cargar datos
+data_josea<- read.csv("train.csv")
+head(data_josea)
+```
+
+```{r}
+#Vistazo rapido los datos
+glimpse(data_josea)
+summary(data_josea)
+```
+
+```{r}
+dep_levels <- unique(data_josea$department)
+gen_levels <- unique(data_josea$gender)
+promo_levels <- unique(data_josea$is_promoted )
+
+data_josea$department <- factor(data_josea$department, levels = dep_levels)
+data_josea$gender  <- factor(data_josea$gender , levels = gen_levels)
+data_josea$is_promoted <- factor(data_josea$is_promoted, levels = promo_levels)
+```
+
+```{r}
+print(paste("Número de valores faltantes totales:", sum(is.na(data_josea))))
+data_josea <- na.omit(data_josea)
+data_josea <- unique(data_josea)
+```
+
+**Gráficos:**
+
+Para responder a esta pregunta, empezaremos con graficar los datos releavantes para este análisis:
+
+```{r}
+#Graficamos Empleados Promovidos
+ggplot(data_josea, aes(x = is_promoted, fill=is_promoted)) +
+  geom_bar() +
+  labs(title = "Empleados Promovidos", x = "Promovido", y = "Empleados")
+
+#Graficamos Empleados Promovidos por Departamento
+ggplot(data_josea, aes(x = department, fill=is_promoted)) +
+  geom_bar(position = "dodge") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(title = "Empleados Promovidos por Departamento", x = "Departamento", y = "Empleados")
+```
+
+Como es de esperar, la cantidad de empleados que son promovidos en la empresa es mucho menor que los que no lo son.
+
+A simple vista no parece haber un departamento cuya proporción de empleados promovidos es mucho mayor con respecto a los demás.
+
+Veamos la proporción del género de los empleados por departamento:
+
+```{r}
+#Graficamos Género de los Empleados por Departamento
+ggplot(data_josea, aes(x = department, fill=gender)) +
+  geom_bar(position = "dodge") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(title = "Género de los Empleados por Departamento", x = "Departamento", y = "Empleados")
+```
+
+Para llevar a cabo este análisis es importante conocer el género de los empleados de cada departamento en la empresa.
+
+De manera general, podemos observar que en todos los departamentos figuran más hombres que mujeres, destacando de manera particular los departamentos "Sales & Marketing", "Analytics", "R&D" y "Finance" por ser los que parecen tener un mayor desbalance en cuanto a género.
+
+Sabiendo esto procedemos mostrar la proporcion de empleados promovidos por genero y por departamento
+
+```{r}
+# Calculamos la proporción de empleados promovidos por género y por departamento
+promotion_prop <- aggregate(cbind(prop = is_promoted) ~ department + gender, data_josea = subdata, FUN = mean)
+
+# Graficamos Proporción de Empleados Promovidos por genero y por departamento
+ggplot(promotion_prop, aes(x = department, y = prop, fill = gender)) +
+  geom_col(position = "dodge") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(title = "Proporción de Empleados Promovidos por Género y por Departamento", x = "Departamento", y = "Proporción Promovida")
+```
+
+Al mostrar gráficamente la proporción de empleados promovidos por género en cada departamento, podemos observar un aparente balance en casi todos los departamentos con excepción de "Analytics", "R&D" y "Procurement", sin embargo, de manera visual aun no podemos llegar a ninguna conclusión certera.
+
+**Prueba de hipótesis:**
+
+A continuación realizaremos un análisis estratificado, para comparar la proporción de empleados promovidos por género dentro de cada estrato (departamento):
+
+```{r}
+# Creamos un subset de los datos con las columnas relevantes para este análisis
+subdata <- data_josea[, c("department", "gender", "is_promoted")]
+estratos <- unique(subdata$department)
+
+estratos
+```
+
+Haremos un test de independencia chi-cuadrado para determinar si existe una asociación significativa entre el género y el estatus de promoción del empleado, donde:
+
+-   H0 - No existe asociación entre el género y la promoción de los empleados
+
+-   HA - Existe asociación entre el género y la promoción de los empleados
+
+```{r}
+# Creamos vectores para almacenar los resultados
+chi_square <- numeric(length(estratos))
+p_value <- numeric(length(estratos))
+```
+
+Para realizar el test de chi-cuadrado, es necesario construir una tabla de contingencia que muestre las frecuencias observadas de hombres y mujeres promovidos y no promovidos, y calcular las frecuencias esperadas suponiendo que no haya asociación entre el género y el estado de promoción. Luego se calcula la estadística chi-cuadrado, que mide la diferencia entre las frecuencias observadas y la esperadas.
+
+```{r}
+# Hacemos loop sobre cada estrato para realizar los test para cada departamento
+
+for (i in seq_along(estratos)) {
+  # Crear subset de los datos para el estrato actual
+  data_estrato <- subdata[subdata$department == estratos[i], ]
+  
+  # Crear tabla de contingencia
+  tabla_promo <- table(data_estrato$is_promoted, data_estrato$gender)
+  
+  # Test de independencia chi-cuadrado
+  result <- chisq.test(tabla_promo)
+  
+  # Almacenar los resultados
+  chi_square[i] <- result$statistic
+  p_value[i] <- result$p.value
+}
+
+# Combinar los resultados y print
+resultados <- data.frame(estratos, chi_square, p_value)
+
+print(resultados)
+```
+
+Análizando los valores de p-value obtenidos para cada estrato (departamento) luego de aplicar el test de independencia chi-cuadrado, podemos concluir lo siguiente:
+
+Los departamentos "Operations", "Technology", "R&D", "Finance", "HR" y "Legal" obtuvieron un p-value \> 0.05, por lo que fallamos en rechazar la hipotesis nula.
+
+Por otro lado, para los departamentos "Sales & Marketing", "Analytics" y "Procurement" se obtuvo un p-value \< 0.05, por lo que rechasamos la hipotesis nula y concluimos que, para estos departamentos, sí existe asociación entre el género y la promoción de los empleados.
+
+Es importante tener en cuenta que una asociación significativa entre el género y la promoción del empleado no implica necesariamente causalidad. Es posible que haya otros factores que contribuyan a las diferencias observadas.
