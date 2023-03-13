@@ -238,6 +238,20 @@ ggplot(data, aes( y = data$previous_year_rating)) +
 
 De los cuales "Edad" y "Cantidad de años de servicios" era los atributos que contenía valores atípicos o muy por encima de la media. 
 
+Realizamos el conteo de los datos que se han visualizado como atípicos
+
+```{r}
+cantidadEdad <- sum(data$age > 55)
+cantidadServicio <- sum(data$length_of_service > 15)
+
+print(cantidadEdad)
+print(cantidadServicio)
+
+mensaje <- paste("Total de datos atípicos: ", cantidadEdad+ cantidadServicio)
+print(mensaje)
+
+```
+
 Tratamiento
 
 Por la cantidad de datos que se veían involucrados decidimos sustituirlo por el valor promedio de los mismos, esto para ambos atributos que hemos identificado.
@@ -246,9 +260,9 @@ Por la cantidad de datos que se veían involucrados decidimos sustituirlo por el
 ```{r}
 PruebaData <- data
 
-
 ```
 
+Tratamiento del atributo Edad
 ```{r}
 q1 <- quantile(PruebaData$age, 0.25)
 q3 <- quantile(PruebaData$age, 0.75)
@@ -263,6 +277,8 @@ media <- mean(PruebaData$age[!atipicos])
 PruebaData$age[atipicos] <- media
 ```
 
+
+Tratamiento del atributo Cantidad de Servicio
 
 ```{r}
 
@@ -299,10 +315,6 @@ Procedemos a implementar nuevamente el modelo predictivo que utilizamos al inici
 
 División del nuevo dataset en train y test
 
-
-```{r}
-
-```
 
 ```{r}
 division2 <- createDataPartition(PruebaData$is_promoted, p = .7, list = FALSE, times = 1)
