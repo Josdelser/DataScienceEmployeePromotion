@@ -44,24 +44,22 @@ Cada miembro realizará la documentación de su parte grupal asignada. Además e
 
 #Packages
 
-install.packages("tidyverse")
-install.packages("dplyr")
-install.packages("magrittr")
-install.packages("caret")
-install.packages("plyr")
-install.packages("rattle")
-install.packages("gapminder")
-install.packages("R.devices")
-install.packages("RWeka")
-install.packages("rpart.plot")
-install.packages("RGtk2")
-install.packages("rattle")
-
-
-install.packages("factoextra")
-install.packages("gridExtra")
-install.packages("animation")
-install.packages("ggfortify")
+#install.packages("tidyverse")
+#install.packages("dplyr")
+#install.packages("magrittr")
+#install.packages("caret")
+#install.packages("plyr")
+#install.packages("rattle")
+#install.packages("gapminder")
+#install.packages("R.devices")
+#install.packages("RWeka")
+#install.packages("rpart.plot")
+#install.packages("RGtk2")
+#install.packages("rattle")
+#install.packages("factoextra")
+#install.packages("gridExtra")
+#install.packages("animation")
+#install.packages("ggfortify")
 
 
 # libraries
@@ -93,10 +91,7 @@ library(plyr)
 
 
 #seed
-set.seed(1)
 set.seed(28)
-set.seed(678)
-set.seed(123)
 ```
 
 
@@ -104,7 +99,6 @@ Información general del Dataset
 
 ```{r}
 data<- read.csv("train.csv")
-data <- rename(data, awards_won = awards_won.)
 head(data)
 colnames(data)
 attach(data)
