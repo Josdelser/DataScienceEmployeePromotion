@@ -27,6 +27,10 @@ Preguntas resueltas:
     ¿Nos puede ayudar la visualización a sacar conclusiones temprana?
     
     ¿Podemos sacar conclusiones tempranas de que variables afectan prediciendo si será promovido un empleado?
+
+    ¿Cuáles son los componentes que más explican la variabilidad de nuestro dataset?
+
+
     
     
 
@@ -35,11 +39,36 @@ Preguntas resueltas:
 Cada miembro realizará la documentación de su parte grupal asignada. Además en el documento se indicará donde empieza y acaba la parte de cada miembro para que así sea mas sencilla su evaluación. 
 
 ```{r}
+
+
+
+#Packages
+
+install.packages("tidyverse")
+install.packages("dplyr")
+install.packages("magrittr")
+install.packages("caret")
+install.packages("plyr")
+install.packages("rattle")
+install.packages("gapminder")
+install.packages("R.devices")
+install.packages("RWeka")
+install.packages("rpart.plot")
+install.packages("RGtk2")
+install.packages("rattle")
+
+
+install.packages("factoextra")
+install.packages("gridExtra")
+install.packages("animation")
+install.packages("ggfortify")
+
+
+# libraries
 library(dplyr)
 library(rpart)
 library(rpart.plot)
 library(rattle)
-library(dplyr)
 library(ggplot2)
 library(RColorBrewer)
 library(ggfortify)
@@ -50,7 +79,24 @@ library(caret)
 require(corrplot)
 
 
+library(magrittr)
+library(lubridate)
+library(tidyverse)
+
+library(cluster)
+library(factoextra)
+library(gridExtra)
+library(stats)
+
+library(class)
+library(plyr)
+
+
+#seed
+set.seed(1)
 set.seed(28)
+set.seed(678)
+set.seed(123)
 ```
 
 
@@ -298,3 +344,71 @@ Observamos que la variable av_training_score es bastante importante ya que por e
 La conclusión final que sacamos de estas gráficas está bastante relacionada con la de la predicción. Vemos que ciertas variables tienden a afectar de manera directa a la promoción y tanto en gráficas como en predicción concuerdan unas con otras.
 
 
+
+
+* Aquí empieza la parte grupal de Salama Mohamed-fadel Sidna
+
+En esta parte empiezo con la lectura del dataset principal en nueva ds "data_Salama", identificar los diferentes variable y sus tipos ,y el nombre de variable y observaciones en la dataset principal.
+<strong>Lectura del dataset data_Salama.csv</strong>
+```{r,eval=TRUE,echo=TRUE}
+data_Salama <- read.csv ("train.csv")
+head(data_Salama,5)
+```
+
+
+<strong>Cuáles son los componentes que más explican la variabilidad de nuestro dataset?</strong>
+
+
+Para responder a esta pregunta seguimos la tecnica de reduccion y luego aplicamos la tecnica de analisis de los componentes principales PCA.
+
+******
+# Técnica de reducción de la dimensión
+******
+<ol>
+<li><b>Analisis de componentes principales creando un subconjunto de nuestra base de datos con las variables numéricas, y analizar sus correlaciones.</b></li>
+</ol>
+
+Empezamos con la matriz de correlaciones de estas variables
+
+```{r,eval=TRUE,echo=TRUE,warning=FALSE, message=FALSE}
+ep_PC=data_Salama[,c("no_of_trainings", "age", "previous_year_rating", "length_of_service", "avg_training_score")]
+epc=cor(na.omit(ep_PC))
+epc
+```
+
+<ul>
+<li> Una correlacion de 4.6% entre los dos variables no_of_trainings y avg_training_score.
+<li> Una correlacion de 62% entre los dos variables age y length_of_service, ademas de una correlacion baja de 0.57% entre los variables age y previous_year_rating. 
+<li> Una correlacion de 7,5% entre los dos variables previous_year_rating y avg_training_score, ademas una correlacion baja de 0.12% entre la variable previous_year_rating y la variable length_of_service.
+<li>  La variable numerica employee_start_age no esta incluida porque es resultado de una substitucion de dos variables numericos que existen en la Matrix que son age y length_of_service, para evitar la redundancia.
+</ul>
+
+
+******
+# PCA 
+******
+</ol>
+<li><b>Realizar la técnica PCA con las variables de la Matrix</b></li>
+
+```{r,eval=TRUE,echo=FALSE,warning=FALSE, message=FALSE}
+pca <- princomp(epc)
+pca
+
+```
+
+
+<li><b>Contribucion de cada variable a cada componente</b></li>
+```{r,eval=TRUE,echo=FALSE,warning=FALSE, message=FALSE}
+print(cumsum(pca$sdev^2)/sum(pca$sdev^2))
+```
+</ol>
+
+
+
+<ul>
+<li> El componente 1 contiene el 52% de la variabilidad.
+<li> El componente 1 más el componente 2 acumulan el 78% de la variabilidad.
+<li> El componente 1 más el componente 2 más el componente 3 acumulan el 96% de la variabilidad, y así succesivamente.
+<li> Vemos que solamente con los tres primeros componentes podemos explicar el 96,77% de la variabilidad de la dataset, 
+de manera que el estudio de nuestra dataset principal sobre estos tres componentes será suficiente para entender aplicar una predicion rezonables.  
+</ul>
