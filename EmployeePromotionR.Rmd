@@ -15,7 +15,7 @@ El dataset elegido es llamado HR Analytics: Employer Promotion Data (https://www
 De esta manera conseguimos derribar el muro de las emociones evitando asi promociones no merecidas a empleados por el mero hecho de caer bien, conseguiendo así una criticidad para que todos los empleados entiendan por que son o no promocionados.Esto es un problema a dia de hoy y vemos muchas publicaciones de como evitar conflictos entre compañeros https://www.ieie.eu/como-ascender-a-un-empleado-sin-generar-conflictos/ 
 
 Personalmente hemos querido abordar este problema porque esto es un problema real de nuestro dia a dia y nos pareció bastante interesante la idea de poder analizar este caso. Es cierto que esto es muy relativo a cada tipo de empresa la cual se fija más en unas variables que en otras pero nos puede aportar el procedimiento para extrapolarlo a otros campos Lo que queremos lograr es plantear el análisis de problemas de este estilo como que visualizacion nos puede ayudar, correlaciones, saber si nos podemos ahorrar pasos a través de sacar conclusiones tempranas... 
-
+  -m
 En resumen creemos que es bastante interesante el estudio de este dataset ya que tiene cierta importancia a la hora de poder entender porque las personas son ascendidas en su trabajo y desde el punto de vista de la empresa les beneficia en el tiempo ahorrado en estos procesos de promoción.
 
 Para organizarnos, hemos decidido crear un repositorio en GitHub (https://github.com/Josdelser/DataScienceEmployeePromotion/tree/develop) para trabajar simultáneamente. También hemos creado una bolsa de preguntas y las hemos asignado según las capacidades y aspiraciones de cada persona. En el caso de que algún miembro quiera obtener una calificación más alta, deberá realizar un mayor número de preguntas individuales. Todos los miembros realizarán una pregunta para la parte grupal y se ha intentado que estas preguntas estén relacionadas con las preguntas individuales, para poder afrontar mejor el desafío. 
@@ -29,11 +29,8 @@ Preguntas resueltas:
     ¿Podemos sacar conclusiones tempranas de que variables afectan prediciendo si será promovido un empleado?
 
     ¿Cuáles son los componentes que más explican la variabilidad de nuestro dataset?
-
-
     
-    
-
+    ¿Realmente afectan los valores atípcios?
     
     
 Cada miembro realizará la documentación de su parte grupal asignada. Además en el documento se indicará donde empieza y acaba la parte de cada miembro para que así sea mas sencilla su evaluación. 
@@ -480,70 +477,3 @@ En conclusión, Hemos obtenido una muy peque mejora en el entrenamiento de este 
 
 
 
-
-* Aquí empieza la parte grupal de Salama Mohamed-fadel Sidna
-
-En esta parte empiezo con la lectura del dataset principal en nueva ds "data_Salama", identificar los diferentes variable y sus tipos ,y el nombre de variable y observaciones en la dataset principal.
-<strong>Lectura del dataset data_Salama.csv</strong>
-```{r,eval=TRUE,echo=TRUE}
-data_Salama <- read.csv ("train.csv")
-head(data_Salama,5)
-```
-
-
-<strong>Cuáles son los componentes que más explican la variabilidad de nuestro dataset?</strong>
-
-
-Para responder a esta pregunta seguimos la tecnica de reduccion y luego aplicamos la tecnica de analisis de los componentes principales PCA.
-
-******
-# Técnica de reducción de la dimensión
-******
-<ol>
-<li><b>Analisis de componentes principales creando un subconjunto de nuestra base de datos con las variables numéricas, y analizar sus correlaciones.</b></li>
-</ol>
-
-Empezamos con la matriz de correlaciones de estas variables
-
-```{r,eval=TRUE,echo=TRUE,warning=FALSE, message=FALSE}
-ep_PC=data_Salama[,c("no_of_trainings", "age", "previous_year_rating", "length_of_service", "avg_training_score")]
-epc=cor(na.omit(ep_PC))
-epc
-```
-
-<ul>
-<li> Una correlacion de 4.6% entre los dos variables no_of_trainings y avg_training_score.
-<li> Una correlacion de 62% entre los dos variables age y length_of_service, ademas de una correlacion baja de 0.57% entre los variables age y previous_year_rating. 
-<li> Una correlacion de 7,5% entre los dos variables previous_year_rating y avg_training_score, ademas una correlacion baja de 0.12% entre la variable previous_year_rating y la variable length_of_service.
-<li>  La variable numerica employee_start_age no esta incluida porque es resultado de una substitucion de dos variables numericos que existen en la Matrix que son age y length_of_service, para evitar la redundancia.
-</ul>
-
-
-******
-# PCA 
-******
-</ol>
-<li><b>Realizar la técnica PCA con las variables de la Matrix</b></li>
-
-```{r,eval=TRUE,echo=FALSE,warning=FALSE, message=FALSE}
-pca <- princomp(epc)
-pca
-
-```
-
-
-<li><b>Contribucion de cada variable a cada componente</b></li>
-```{r,eval=TRUE,echo=FALSE,warning=FALSE, message=FALSE}
-print(cumsum(pca$sdev^2)/sum(pca$sdev^2))
-```
-</ol>
-
-
-
-<ul>
-<li> El componente 1 contiene el 52% de la variabilidad.
-<li> El componente 1 más el componente 2 acumulan el 78% de la variabilidad.
-<li> El componente 1 más el componente 2 más el componente 3 acumulan el 96% de la variabilidad, y así succesivamente.
-<li> Vemos que solamente con los tres primeros componentes podemos explicar el 96,77% de la variabilidad de la dataset, 
-de manera que el estudio de nuestra dataset principal sobre estos tres componentes será suficiente para entender aplicar una predicion rezonables.  
-</ul>
