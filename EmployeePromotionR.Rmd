@@ -1,63 +1,44 @@
 ---
-title: "EmployeePromotion"
+title: "Trabajo Final Data Science - Grupo 3"
 output:
   pdf_document: default
   html_document: default
-date: "2023-02-18"
+date: "2023-03-15"
 ---
 
+**Integrantes:** José Arturo Espaillat, Johnsiel Castaños, José Delgado, Salama Mohamed-fadel Sidna.
 
+El dataset elegido es llamado **HR Analytics: Employer Promotion Data** (<https://www.kaggle.com/datasets/arashnic/hr-ana?select=test.csv>) sacado de Kaggle, el cual cuenta con 13 columnas y 54808 filas. Estos datos parten de una empresa, la cual tiene un problema debido a que las promociones definitivas no se anuncian hasta después de evaluar empleado por empleo, haciendo de esto un proceso lento y tedioso. Gracias al análisis de estos históricos podemos entender cuáles son las variables que más afectan a la promoción para aumentar la eficacia del proceso, ya que ahorran mucho más tiempo al tener claro cuáles son los potenciales candidatos. También los candidatos obtienen un punto de vista de que es lo que más repercute en su promoción, pudiendo así mejorar cierto aspecto de cara a la evaluación.
 
-Este proyecto está realizado por el grupo 3 formado por José Arturo Espaillat, Johnsiel Castaños, José Delgado, Salama Mohamed-fadel Sidna
+De esta manera conseguimos derribar el muro de las emociones, evitando así promociones no merecidas a empleados por el mero hecho de caer bien, consiguiendo así una criticidad para que todos los empleados entiendan por qué son o no promocionados. Esto es un problema a día de hoy y vemos muchas publicaciones de como evitar conflictos entre compañeros <https://www.ieie.eu/como-ascender-a-un-empleado-sin-generar-conflictos/>
 
-El dataset elegido es llamado HR Analytics: Employer Promotion Data (https://www.kaggle.com/datasets/arashnic/hr-ana?select=test.csv) sacado de Kaggle, el cual cuenta con 13 columnas y 54808 filas. Estos datos parten de una empresa la cual tiene un problema debido a que las promociones definitivas no se anuncian hasta después de evaluar empleado por empleo haciendo de esto un proceso lento y tedioso. Gracias al análisis de estos históricos podemos entender cuales son las variables que más afectan a la promoción para aumentar la eficacia del proceso ya que ahorran mucho más tiempo al tener claro cuales son los potenciales candidatos. También los candidatos obtienen un punto de vista de que es lo que más repercute en su promoción, pudiendo así mejorar cierto aspecto de cara a la evaluación.
+Personalmente, hemos querido abordar este problema porque esto es un problema real de nuestro día a día y nos pareció bastante interesante la idea de poder analizar este caso. Es cierto que esto es muy relativo a cada tipo de empresa, la cual se fija más en unas variables que en otras, pero nos puede aportar el procedimiento para extrapolarlo a otros campos. Lo que queremos lograr es plantear el análisis de problemas de este estilo, qué visualizacion nos puede ayudar, correlaciones, saber si nos podemos ahorrar pasos a través de sacar conclusiones tempranas...
 
-De esta manera conseguimos derribar el muro de las emociones evitando asi promociones no merecidas a empleados por el mero hecho de caer bien, conseguiendo así una criticidad para que todos los empleados entiendan por que son o no promocionados.Esto es un problema a dia de hoy y vemos muchas publicaciones de como evitar conflictos entre compañeros https://www.ieie.eu/como-ascender-a-un-empleado-sin-generar-conflictos/ 
+En resumen, creemos que es bastante interesante el estudio de este dataset, ya que tiene cierta importancia a la hora de poder entender por qué las personas son ascendidas en su trabajo y desde el punto de vista de la empresa les beneficia en el tiempo ahorrado en estos procesos de promoción.
 
-Personalmente hemos querido abordar este problema porque esto es un problema real de nuestro dia a dia y nos pareció bastante interesante la idea de poder analizar este caso. Es cierto que esto es muy relativo a cada tipo de empresa la cual se fija más en unas variables que en otras pero nos puede aportar el procedimiento para extrapolarlo a otros campos Lo que queremos lograr es plantear el análisis de problemas de este estilo como que visualizacion nos puede ayudar, correlaciones, saber si nos podemos ahorrar pasos a través de sacar conclusiones tempranas... 
-  -m
-En resumen creemos que es bastante interesante el estudio de este dataset ya que tiene cierta importancia a la hora de poder entender porque las personas son ascendidas en su trabajo y desde el punto de vista de la empresa les beneficia en el tiempo ahorrado en estos procesos de promoción.
+Para organizarnos, hemos decidido crear un repositorio en GitHub (<https://github.com/Josdelser/DataScienceEmployeePromotion/tree/develop>) para trabajar simultáneamente. También hemos creado una bolsa de preguntas y las hemos asignado según las capacidades y aspiraciones de cada persona. En el caso de que algún miembro quiera obtener una calificación más alta, deberá realizar un mayor número de preguntas individuales. Todos los miembros realizarán una pregunta para la parte grupal y se ha intentado que estas preguntas estén relacionadas con las preguntas individuales, para poder afrontar mejor el desafío.
 
-Para organizarnos, hemos decidido crear un repositorio en GitHub (https://github.com/Josdelser/DataScienceEmployeePromotion/tree/develop) para trabajar simultáneamente. También hemos creado una bolsa de preguntas y las hemos asignado según las capacidades y aspiraciones de cada persona. En el caso de que algún miembro quiera obtener una calificación más alta, deberá realizar un mayor número de preguntas individuales. Todos los miembros realizarán una pregunta para la parte grupal y se ha intentado que estas preguntas estén relacionadas con las preguntas individuales, para poder afrontar mejor el desafío. 
+[**Preguntas:**]{.underline}
 
-A continuación, se detalla la asignación de cada miembro:
+1.  ¿Nos puede ayudar la visualización a sacar conclusiones temprana?
 
-Preguntas resueltas:
+2.  ¿Podemos averiguar qué variables afectan más a través de la predicción?
 
-    ¿Nos puede ayudar la visualización a sacar conclusiones temprana?
-    
-    ¿Podemos sacar conclusiones tempranas de que variables afectan prediciendo si será promovido un empleado?
+3.  ¿Afectan los valores atípicos el resultado del modelo predictivo?
 
-    ¿Cuáles son los componentes que más explican la variabilidad de nuestro dataset?
-    
-    ¿Realmente afectan los valores atípcios?
-    
-    
-Cada miembro realizará la documentación de su parte grupal asignada. Además en el documento se indicará donde empieza y acaba la parte de cada miembro para que así sea mas sencilla su evaluación. 
+------------------------------------------------------------------------
+
+Cargar librerias:
 
 ```{r}
-
-
-
 #Packages
 
-#install.packages("tidyverse")
-#install.packages("dplyr")
-#install.packages("magrittr")
-#install.packages("caret")
-#install.packages("plyr")
-#install.packages("rattle")
-#install.packages("gapminder")
-#install.packages("R.devices")
-#install.packages("RWeka")
-#install.packages("rpart.plot")
-#install.packages("RGtk2")
-#install.packages("rattle")
-#install.packages("factoextra")
-#install.packages("gridExtra")
-#install.packages("animation")
-#install.packages("ggfortify")
-
+# install.packages("dplyr")
+# install.packages("rpart")
+# install.packages("rpart.plot")
+# install.packages("rattle")
+# install.packages("plyr")
+# install.packages("ggplot2")
 
 # libraries
 library(dplyr)
@@ -65,39 +46,19 @@ library(rpart)
 library(rpart.plot)
 library(rattle)
 library(ggplot2)
-library(RColorBrewer)
-library(ggfortify)
-library(vcd)
 library(caret)
-
-
-require(corrplot)
-
-
-library(magrittr)
-library(lubridate)
-library(tidyverse)
-
-library(cluster)
-library(factoextra)
-library(gridExtra)
-library(stats)
-
-library(class)
-library(plyr)
-
 
 #seed
 set.seed(28)
 ```
 
-
-Información general del Dataset
+Información general del Dataset:
 
 ```{r}
 data<- read.csv("train.csv")
-head(data)
 colnames(data)
+head(data)
+
 attach(data)
 ```
 
@@ -109,59 +70,170 @@ object.size(data)/1024^2 #MB
 object.size(data)/1024^3 #GB
 
 ```
-Vemos que el número de bytes del dataset es 4073,3 KB o 4,1 MB una vez lo tenemos cargado
 
-Es verdad que el dataset está presentable pero aún así tenemos que hacerle una etapa de transformaciones y limpieza. Primero vamos a quitar todos los NA y duplicados, luego cada mienbro para responder a sus preguntas hará mas transformaciones.
+Vemos que el número de bytes del dataset es 4073,3 KB o 4,1 MB una vez lo tenemos cargado.
+
+Es verdad que el dataset está presentable pero aún así tenemos que hacerle una etapa de transformaciones y limpieza. Primero vamos a quitar todos los NA y duplicados.
+
 ```{r}
 print(paste("Número de valores faltantes totales:", sum(is.na(data))))
 data <- na.omit(data)
 data <- unique(data)
-
 ```
-*Aqui empieza la parte de Jose Delgado
 
-Una vez cargado el dataset y tratado mínimamente vamos a pasar a hacer responder a las preguntas, primero la pregunta grupal:
-
-
-    ¿Podemos sacar conclusiones tempranas de que variables afectan prediciendo si será promovido un empleado?
-
-La cual se plantea responder mediante una predicción utilizando validación cruzada (cross validation), para ello podemos tirar de regresión logística o un árbol de decisión. En este caso usaré árboles de decisión para así también ver qué variables influyen y poder comparar este resultado con las preguntas individuales 
-
-
-Primero le hacemos preprocesamiento de manera preparatoria a la predicción, luego dividimos el dataset en conjunto de prueba(test) y entrenamiento(train) para obtener resultado
-```{r}
-datajose <- data
-```
 Luego convertimos las variables categóricas en factores y definimos explícitamente los niveles de cada categoría.
+
 ```{r}
-dep_levels <- unique(datajose$department)
-gen_levels <- unique(datajose$gender)
-recru_levels <- unique(datajose$recruitment_channel)
-promo_levels <- unique(datajose$is_promoted )
-award_levels <- unique(datajose$awards_won)
+dep_levels <- unique(data$department)
+gen_levels <- unique(data$gender)
+recru_levels <- unique(data$recruitment_channel)
+promo_levels <- unique(data$is_promoted )
+award_levels <- unique(data$awards_won)
 
+data$department <- factor(data$department, levels = dep_levels)
+data$gender  <- factor(data$gender , levels = gen_levels)
+data$recruitment_channel <- factor(data$recruitment_channel, levels = recru_levels)
+data$is_promoted <- factor(data$is_promoted, levels = promo_levels)
+data$awards_won <- factor(data$awards_won, levels = award_levels)
+```
 
-datajose$department <- factor(datajose$department, levels = dep_levels)
-datajose$gender  <- factor(datajose$gender , levels = gen_levels)
-datajose$recruitment_channel <- factor(datajose$recruitment_channel, levels = recru_levels)
-datajose$is_promoted <- factor(datajose$is_promoted, levels = promo_levels)
-datajose$awards_won <- factor(datajose$awards_won, levels = award_levels)
+------------------------------------------------------------------------
+
+# [Pregunta 1:]{.underline}
+
+## ¿Nos puede ayudar la visualización a sacar conclusiones temprana?
+
+Para responder a esta pregunta vamos a realizar gráficas tanto para variables numéricas como categóricas.
+
+Partimos de un dataset exclusivo para que no afecte a otros cálculos:
+
+```{r}
+data_p1 <- data
+```
+
+Primero vamos a ver las variables categóricas. Empezamos por ver si los estudios influyen, vamos a graficar la distribución de empleados promovidos según sus estudios
+
+```{r}
+ggplot(data = data_p1, aes(x = education, fill = is_promoted)) +
+  geom_bar(position = "dodge") +
+  labs(title = "Promocionado según estudios", 
+       x = "Nivel de estudios", 
+       y = "Total",
+       fill = "Promovido") +
+  theme_bw()
 
 ```
 
-Partimos de un dataset exclusivo para la predicción y que no afecte a otros cálculos
-```{r}
-datajosepred <-datajose
-```
+Observamos que la mayoría tienen como mínimo el bachillerato y luego el Master. Podemos pensar que es una variable que afecta debido a las diferencias entre promovido o no, pero no es decisiva o tiene una importancia mayor.
 
+Repetimos pero con los premios ganados
 
 ```{r}
-division <- createDataPartition(datajosepred$is_promoted, p = .7, list = FALSE, times = 1)
-train <- datajosepred[division, ]
-test  <- datajosepred[-division, ]
+ggplot(data = data_p1, aes(x = awards_won, fill = is_promoted)) +
+  geom_bar(position = "stack") +
+  labs(title = "Promovido por premios ganados", 
+       x = "Premio", 
+       y = "Total",
+       fill = "Promovido") +
+  theme_bw()
+
 ```
 
-Entrenamos el modelo y visualizamos para tener una primera imagen de las variables decisivas 
+Se observa que para ser promovido es relevante tener un premio, ya que el número de promovidos con premios es notablemente mayor.
+
+```{r}
+ggplot(data = data_p1, aes(x = department, fill = is_promoted)) +
+  geom_bar(position = "stack") +
+  labs(title = "Promocionado según departamento", 
+       x = "Departamento", 
+       y = "Total",
+       fill = "Promovido") +
+  theme_bw()
+
+```
+
+Con este gráfico de barras apiladas vemos que esta variable no afecta fuertemente a la promoción ya que cada departamento tiene resultados similares si no contamos en proporción.
+
+Por último vamos a ver si el género afecta.
+
+```{r}
+ggplot(data = data_p1, aes(x = gender, fill = is_promoted)) +
+  geom_bar(position = "stack") +
+  labs(title = "Promovido por géneros", 
+       x = "Géneros", 
+       y = "Total",
+       fill = "Promovido") +
+  theme_bw()
+
+```
+
+Aqui vemos que en proporcion que no afecta el género, ya que a simple vista los porcentajes de promocio segun el sexo parecen cercanos.
+
+Ahora pasamos a las variables numéricas:
+
+Empezamos con la edad representada en un gráfico de densidad para ver donde se concentran la mayoría de promocionados por si vemos que la edad pueda afectar ya que también está relacionada con el tiempo que lleves en la empresa
+
+```{r}
+ggplot(data = data_p1, aes(x = age, fill = is_promoted)) +
+  geom_density(alpha = 0.5) +
+  labs(title = "Promovido según edad", 
+       x = "Edad", 
+       y = "Densidad",
+       fill = "Promovido") +
+  theme_bw()
+
+```
+
+El rango es bastante amplio por lo que no vemos que la edad concreta pueda afectar, pero si puede afectar dependiendo de los años que lleve en la empresa, es decir, una persona con 40 años tiene más probabilidad de llevar más tiempo en la empresa que una persona de 20 años. Por eso vamos a graficar ahora si el tiempo en la empresa afecta.
+
+```{r}
+ggplot(data = data_p1, aes(x = is_promoted,
+                                    fill = factor(previous_year_rating))) +
+  geom_bar(position = "stack") +
+  labs(x = "Promovido", y = "Número de empleados") +
+  ggtitle("Gráfico de barras apiladas para la variable 'previous_year_rating'") 
+ 
+
+```
+
+Ahora si encontramos dos grupos que afectan a la promoción, los que llevan 5 años y 3.
+
+Por último vamos a probar con la variable avg_training_score para ver si esta nos afecta. Para ello vamos con un gráfico de cajas y bigotes
+
+```{r}
+ggplot(data = data_p1, aes(x = is_promoted, y = avg_training_score)) +
+  geom_boxplot() +
+  labs(x = "Promovido", y = "Puntuación de entrenamiento promedio") +
+  ggtitle("Gráfico de cajas y bigotes para la variable 'avg_training_score'")
+
+```
+
+Observamos que la variable av_training_score es bastante importante ya que por encima de cierto rango se concentra todos los que han sido promovidos.
+
+------------------------------------------------------------------------
+
+# [Pregunta 2:]{.underline}
+
+## ¿Podemos averiguar qué variables afectan más a través de la predicción?
+
+Esta pregunta se plantea responder mediante una predicción utilizando validación cruzada (cross validation), para ello podemos tirar de regresión logística o un árbol de decisión. En este caso usaremos árboles de decisión para así también ver qué variables influyen y poder comparar este resultado con otras preguntas.
+
+Volvemos a partir de un dataset exclusivo para esta pregunta:
+
+```{r}
+data_p2 <- data
+```
+
+Dividimos el dataset en conjunto de prueba(test) y entrenamiento(train) para obtener resultado
+
+```{r}
+division <- createDataPartition(data_p2$is_promoted, p = .7, list = FALSE,
+                                times = 1)
+train <- data_p2[division, ]
+test  <- data_p2[-division, ]
+```
+
+Entrenamos el modelo y visualizamos para tener una primera imagen de las variables decisivas
 
 ```{r}
 arbol <- rpart(formula =  is_promoted  ~ ., data = train, method = 'class')
@@ -169,17 +241,15 @@ arbol <- rpart(formula =  is_promoted  ~ ., data = train, method = 'class')
 fancyRpartPlot(arbol)
 ```
 
+Podemos observar que la variable que más afecta es la puntuación en el rango superior a 91, donde con un 99% de posibilidades serás promocionado.
 
-Podemos observar que la variable que más afecta es la puntuación en el rango superior a 91, donde con un 99% de posibilidades serás promocionado. Al tener una variable con tanta importancia se nos viene a la cabeza otra pregunta: Quitando esta variable, ¿Como sería el árbol final? Se verá mas adelante.
-
-Pasamos a predecir según clasificación 
-
+Pasamos a predecir según clasificación
 
 ```{r}
 prediccion <-predict(arbol, test, type = "class")
 ```
- 
-Ahora toca evaluar el rendimiento según validación cruzada. 
+
+Ahora toca evaluar el rendimiento según validación cruzada.
 
 ```{r}
 valcruz <- trainControl(method = "cv", number = 10)
@@ -195,185 +265,66 @@ rpart.plot(arbolfit$finalModel, type = 2, extra = 1)
 
 ```
 
-Mejoramos la visualización para ver mejor el nombre de las variable sy al estructura del árbol
+Mejoramos la visualización para ver mejor el nombre de las variable y la estructura del árbol
 
 ```{r}
 prp(arbolfit$finalModel, type = 2, nn = TRUE, 
     fallen.leaves = FALSE,
     varlen = 0,  shadow.col = "gray")
 ```
+
 ```{r}
 prediccionTest <- predict(arbolfit, newdata = test)
 confusionMatrix(prediccionTest, test$is_promoted)
 ```
+
 Con estos datos ya podemos sacar conclusiones sobre el modelo:
-  
-  - Hay 13,861 verdaderos negativos y 254 verdaderos positivos
-  
-  - Hay 1,044 falsos negativos y 45 falsos positivos
+
+-   Hay 13,861 verdaderos negativos y 254 verdaderos positivos
+
+-   Hay 1,044 falsos negativos y 45 falsos positivos
 
 Ya con estos valores vemos que el modelo está bien ajustado. Con estos datos obtenemos una precisión del 92,8% y una tasa de error del 7,16%. También observamos que tenemos mayor capacidad para acertar, es decir predecir cuándo se va a promover que cuando no se va a promover.
 
-Además observando el arbolfit vemos que ya aparecen más variables que son relevantes como award_won y previus_year_rating. Añadir que vemos una fuerte tendencia en el departamento de analiticas, donde superando los 82 puntos serás promocionado con alta seguridad. 
+Además observando el arbolfit vemos que ya aparecen más variables que son relevantes como award_won y previus_year_rating. Añadir que vemos una fuerte tendencia en el departamento de analiticas, donde superando los 82 puntos serás promocionado con alta seguridad.
 
-Segunda pregunta
+------------------------------------------------------------------------
 
+# [Pregunta 3:]{.underline}
 
-Una vez hecha la predicción, me pregunté si había alguna gráfica que me hubiese podido ayudar a sacar una conclusión temprana de las variables que más afectan. Para ello voy a realizar gráficas tanto para variables numéricas como categóricas.
-
-Pondré el caso de que no hemos predicho todavía y no se qué variables afectan, de esta manera poder simular un problema real ya que mi tendencia será ir a por las variables que creo que puedan afectar más.
-
-Volvemos a partir de un dataset exclusivo para esta parte
-
-```{r}
-datajosegraficas <- datajose
-```
-
-
-Primero vamos a ver las variables categóricas. Empezamos por ver si los estudios influyen, vamos a graficar la distribución de empleados promovidos según sus estudios 
-
-
-```{r}
-ggplot(data = datajosegraficas, aes(x = education, fill = is_promoted)) +
-  geom_bar(position = "dodge") +
-  labs(title = "Promocionado según estudios", 
-       x = "Nivel de estudios", 
-       y = "Total",
-       fill = "Promovido") +
-  theme_bw()
-
-```
-Observamos que la mayoría tienen como mínimo el bachillerato y luego el Master. Podemos pensar que es una variable que afecta debido a las diferencias entre promovido o no pero no es decisiva o tiene una importancia mayor.
-
-Repetimos pero con los premios ganados
-
-```{r}
-ggplot(data = datajosegraficas, aes(x = awards_won, fill = is_promoted)) +
-  geom_bar(position = "stack") +
-  labs(title = "Promovido por premios ganados", 
-       x = "Premio", 
-       y = "Total",
-       fill = "Promovido") +
-  theme_bw()
-
-```
-Se observa que en los que están promovidos tiene mayor relevancia tener un premio, ya que el número de promovidos con premios es notablemente mayor aunque a simple vista no se observe.
-
-```{r}
-ggplot(data = datajosegraficas, aes(x = department, fill = is_promoted)) +
-  geom_bar(position = "stack") +
-  labs(title = "Promocionado según departamento", 
-       x = "Departamento", 
-       y = "Total",
-       fill = "Promovido") +
-  theme_bw()
-
-```
-Con este gráfico de barras apiladas vemos que esta variable no afecta fuertemente a la promoción ya que cada departamento tiene resultados iguales si no contamos en proporción porque al no saber a qué se dedica la empresa no podemos justificar el número de empleados por cada departamento.
-
-
-Por último vamos a ver si el género afecta.
-```{r}
-ggplot(data = datajosegraficas, aes(x = gender, fill = is_promoted)) +
-  geom_bar(position = "stack") +
-  labs(title = "Promovido por géneros", 
-       x = "Géneros", 
-       y = "Total",
-       fill = "Promovido") +
-  theme_bw()
-
-```
-Aqui vemos que en proporcion que no afecta el género, ya que a simple vista los porcentajes de promocio segun el sexo parecen cercanoss.
-
-
-
-Ahora pasamos a las variables numéricas.
-
-Empezamos con la edad representada en un gráfico de densidad para ver donde se concentran la mayoría de promocionados por si vemos que la edad pueda afectar ya que también está relacionada con el tiempo que lleves en la empresa
-
-```{r}
-ggplot(data = datajosegraficas, aes(x = age, fill = is_promoted)) +
-  geom_density(alpha = 0.5) +
-  labs(title = "Promovido según edad", 
-       x = "Edad", 
-       y = "Densidad",
-       fill = "Promovido") +
-  theme_bw()
-
-```
-
-El rango es bastante amplio por lo que no vemos que la edad concreta pueda afectar, pero si puede afectar dependiendo de los años que lleve en la empresa, es decir, una persona con 40 años tiene más probabilidad de llevar más tiempo en la empresa que una persona de 20 años. Por eso vamos a graficar ahora si el tiempo en la empresa afecta
-
-```{r}
-ggplot(data = datajosegraficas, aes(x = is_promoted, fill = factor(previous_year_rating))) +
-  geom_bar(position = "stack") +
-  labs(x = "Promovido", y = "Número de empleados") +
-  ggtitle("Gráfico de barras apiladas para la variable 'previous_year_rating'") 
- 
-
-```
-Ahora si encontramos dos grupos que afectan a la promoción, los que llevan 5 años y 3.
-
-
-
-Por último vamos a probar con la variable avg_training_score para ver si esta nos afecta.Para ello vamos con un gráfico de cajas y bigotes
-
-
-
-```{r}
-ggplot(data = datajosegraficas, aes(x = is_promoted, y = avg_training_score)) +
-  geom_boxplot() +
-  labs(x = "Promovido", y = "Puntuación de entrenamiento promedio") +
-  ggtitle("Gráfico de cajas y bigotes para la variable 'avg_training_score'")
-
-```
-
-
-Observamos que la variable av_training_score es bastante importante ya que por encima de cierto rango se concentra todos los que han sido promovidos.
-
-
-La conclusión final que sacamos de estas gráficas está bastante relacionada con la de la predicción. Vemos que ciertas variables tienden a afectar de manera directa a la promoción y tanto en gráficas como en predicción concuerdan unas con otras.
-
-
-
-
-
-
-* Aquí empieza la parte de Johnsiel
-
-¿Afectan los valores atípicos los resultados del modelo predictivo?
+## ¿Afectan los valores atípicos los resultados del modelo predictivo?
 
 Conociendo los resultados de nuestro modelo predictivo, nos surge la duda: de que manera podríamos mejorar los resultados de nuestro modelo, nos surgió la idea de trabajar con los datos atípicos.
 
 Procedimos a graficar mediante los gráficos de cajas los diferentes atributos del dataset para identificar cuales contenían valores atípicos.
 
 ```{r}
-data <- datajose
+data_p3 <- data
 
-ggplot(data, aes( y = data$age)) +
+ggplot(data_p3, aes( y = data_p3$age)) +
   stat_boxplot(geom ='errorbar') + 
   geom_boxplot()
 
-ggplot(data, aes( y = data$length_of_service)) +
+ggplot(data_p3, aes( y = data_p3$length_of_service)) +
   stat_boxplot(geom ='errorbar') + 
   geom_boxplot()
 
-ggplot(data, aes( y = data$avg_training_score)) +
+ggplot(data_p3, aes( y = data_p3$avg_training_score)) +
   stat_boxplot(geom ='errorbar') + 
   geom_boxplot()
 
-ggplot(data, aes( y = data$previous_year_rating)) +
+ggplot(data_p3, aes( y = data_p3$previous_year_rating)) +
   stat_boxplot(geom ='errorbar') + 
   geom_boxplot()
 ```
 
-De los cuales "Edad" y "Cantidad de años de servicios" era los atributos que contenía valores atípicos o muy por encima de la media. 
+De los cuales "Edad" y "Cantidad de años de servicios" era los atributos que contenía valores atípicos o muy por encima de la media.
 
 Realizamos el conteo de los datos que se han visualizado como atípicos
 
 ```{r}
-cantidadEdad <- sum(data$age > 55)
-cantidadServicio <- sum(data$length_of_service > 15)
+cantidadEdad <- sum(data_p3$age > 55)
+cantidadServicio <- sum(data_p3$length_of_service > 15)
 
 print(cantidadEdad)
 print(cantidadServicio)
@@ -383,88 +334,79 @@ print(mensaje)
 
 ```
 
-Tratamiento
-
 Por la cantidad de datos que se veían involucrados decidimos sustituirlo por el valor promedio de los mismos, esto para ambos atributos que hemos identificado.
 
-
 ```{r}
-#Referenciaremos el mismo dataset ya preprocesado y utilizado para hacer la predicción
-PruebaData <- data
+#Tratamiento del atributo Edad
 
-```
-
-Tratamiento del atributo Edad
-```{r}
-q1 <- quantile(PruebaData$age, 0.25)
-q3 <- quantile(PruebaData$age, 0.75)
+q1 <- quantile(data_p3$age, 0.25)
+q3 <- quantile(data_p3$age, 0.75)
 iqr <- q3 - q1
 
 
-atipicos <- PruebaData$age < q1 - 1.5*iqr | PruebaData$age > q3 + 1.5*iqr
+atipicos <- data_p3$age < q1 - 1.5*iqr | data_p3$age > q3 + 1.5*iqr
 
 
-media <- mean(PruebaData$age[!atipicos])
+media <- mean(data_p3$age[!atipicos])
 
-PruebaData$age[atipicos] <- media
+data_p3$age[atipicos] <- media
 ```
 
-Tratamiento del atributo Cantidad de Servicio
-
 ```{r}
+#Tratamiento del atributo Cantidad de Servicio
 
-q1 <- quantile(PruebaData$length_of_service, 0.25)
-q3 <- quantile(PruebaData$length_of_service, 0.75)
+q1 <- quantile(data_p3$length_of_service, 0.25)
+q3 <- quantile(data_p3$length_of_service, 0.75)
 iqr <- q3 - q1
 
 
-atipicos <- PruebaData$length_of_service < q1 - 1.5*iqr | PruebaData$length_of_service > q3 + 1.5*iqr
+atipicos <- data_p3$length_of_service < q1 - 1.5*iqr| 
+  data_p3$length_of_service > q3 + 1.5*iqr
 
 
-media <- mean(PruebaData$length_of_service[!atipicos])
+media <- mean(data_p3$length_of_service[!atipicos])
 
-PruebaData$length_of_service[atipicos] <- media
+data_p3$length_of_service[atipicos] <- media
 
 ```
-
 
 Luego de haber sustituido los valores atípicos, realizamos los diagramas de cajas para ver la media.
 
 ```{r}
-ggplot(PruebaData, aes( y = PruebaData$age)) +
+ggplot(data_p3, aes( y = data_p3$age)) +
   stat_boxplot(geom ='errorbar') + 
   geom_boxplot()
 ```
 
 ```{r}
-ggplot(PruebaData, aes( y = PruebaData$length_of_service)) +
+ggplot(data_p3, aes( y = data_p3$length_of_service)) +
   stat_boxplot(geom ='errorbar') + 
   geom_boxplot()
 ```
 
 Procedemos a implementar nuevamente el modelo predictivo que utilizamos al inicio, pero utilizado el nuevo dataset.
 
-División del nuevo dataset en train y test
-
 ```{r}
-division2 <- createDataPartition(PruebaData$is_promoted, p = .7, list = FALSE, times = 1)
-train2 <- PruebaData[division, ]
-test2  <- PruebaData[-division, ]
+#División del nuevo dataset en train y test
+
+division2 <- createDataPartition(data_p3$is_promoted, p = .7, list = FALSE,
+                                 times = 1)
+train2 <- data_p3[division, ]
+test2  <- data_p3[-division, ]
 
 ```
 
-Entremiento del modelo 
-
 ```{r}
+#Entremiento del modelo
+
 valcruz2 <- trainControl(method = "cv", number = 10)
 
 arbolfit2 <- train(is_promoted ~ ., data = train2, method = "rpart",
                  trControl = valcruz2, tuneLength = 10)
 ```
 
-Creación de matriz de confusión 
-
 ```{r}
+#Creación de matriz de confusión
 
 prediccionTest2 <- predict(arbolfit2, newdata = test2)
 confusionMatrix(table(prediccionTest2, test2$is_promoted))
@@ -474,6 +416,3 @@ confusionMatrix(table(prediccionTest2, test2$is_promoted))
 En vista de los resultados obtenidos, podemos notar que tenemos un accuracy el 93.24 en esta nueva predicción, frente a ala anterior que fue del 92.84, por lo que hemos tenido una mejora de 0.40.
 
 En conclusión, Hemos obtenido una muy peque mejora en el entrenamiento de este nuevo modelo, lo que nos da como resultado que los valores atípicos, o valores por fuera de la media, no afectan potencialmente la predicción.
-
-
-
